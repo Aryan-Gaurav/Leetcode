@@ -1,0 +1,21 @@
+Problem link https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+
+code
+class Solution {
+public:
+int maxProfit(vector<int> &v) 
+{
+   if(v.size()<2) return 0;
+   int n=v.size();
+   int psell1=0,psell2=0,pbuy=-1e9;
+   for(int i=0;i<n;i++)
+   {
+    int currbuy=psell2-v[i];
+    int currsell=pbuy+v[i];
+    psell2=max(psell1,psell2);
+    psell1=max(psell1,currsell);
+    pbuy=max(pbuy,currbuy);
+   }
+   return max(psell1,psell2);
+}
+};
