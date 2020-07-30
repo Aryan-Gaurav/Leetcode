@@ -28,7 +28,7 @@ Solution 2:
 O(1) space
 If the array is read only(immutable).
 Same idea as linked list cycle detection.
-int findDuplicate(const vector<int>& v) 
+int findDuplicate(const vector<int>& v) //could also do by subtracting 1 for better understanding
 {
     int fast=v[v[0]],slow=v[0];
     while(fast!=slow)
