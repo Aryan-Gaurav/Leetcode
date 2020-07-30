@@ -1,0 +1,46 @@
+problem link https://leetcode.com/problems/find-the-duplicate-number/
+Statement:Given an array nums containing n + 1 integers where each integer is between 1 and n (inclusive), prove that at least one duplicate number must exist. 
+Assume that there is only one duplicate number, find the duplicate one(it may occur more than once).
+
+Normal solution in O(n) time and O(n) space complexity using hash map,O(nlogn) using binary search and O(1) space.In interviewbit O(n) and O(sqrt(n)) space.
+O(1) space:
+Solution 1:
+
+Idea is to use the given array as a hashmap.The values which are ecounterd before,its index has -ve values.If we ecounter a value which is already -ve then we got 
+the duplicate.
+
+class Solution {
+public:
+int findDuplicate(vector<int>& v) 
+{
+    int n=v.size();
+    for(int i=0;i<n;i++)
+    {
+        int val=abs(v[i]);
+        if(v[val]<0)
+            return val;
+        else v[val]*=-1;
+    }
+    return -1;    
+}
+};
+Solution 2:
+O(1) space
+If the array is read only(immutable).
+Same idea as linked list cycle detection.
+int findDuplicate(const vector<int>& v) 
+{
+    int fast=v[v[0]],slow=v[0];
+    while(fast!=slow)
+    {
+        fast=v[v[fast]];
+        slow=v[slow];
+    }
+    fast=0;
+    while(fast!=slow)
+    {
+        fast=v[fast];
+        slow=v[slow];
+    }
+    return slow;   
+}
