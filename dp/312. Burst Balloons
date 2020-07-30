@@ -32,3 +32,27 @@ int maxCoins(vector<int>& v)
     return dp[0][n-1];
 }
 };
+
+//better solution without if else
+
+class Solution {
+public:
+int maxCoins(vector<int>& v) 
+{
+    v.insert(v.begin(),1);//padding for underflow
+    v.push_back(1);       //padding for overflow
+    int n=v.size();
+    int dp[n][n];
+    memset(dp,0,sizeof(dp));
+    for(int len=1;len<=n-2;len++)
+    {
+        for(int i=1;i+(len-1)<n-1;i++)
+        {
+            int j=i+(len-1);//now see the for loop again
+            for(int k=i;k<=j;k++)//think in reverse way....what is the last ballon to be burst
+                dp[i][j]=max(v[k]*v[i-1]*v[j+1]+dp[i][k-1]+dp[k+1][j],dp[i][j]);
+        }
+    }
+    return dp[1][n-2];
+}
+};
