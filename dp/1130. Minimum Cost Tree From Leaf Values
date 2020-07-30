@@ -1,6 +1,8 @@
 Problem link https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
 
 code
+DP SOLUTION O(N^3)
+
 class Solution {
 public:
 int mctFromLeafValues(vector<int>&v) 
@@ -31,3 +33,5 @@ int mctFromLeafValues(vector<int>&v)
     return dp[0][n-1];
 }
 };
+
+STACK SOLUTION
