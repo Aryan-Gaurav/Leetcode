@@ -15,7 +15,7 @@ int minScoreTriangulation(vector<int>& v)
             int j=i+len-1;
             dp[i][j%n]=1e9;
             for(int k=i+1;k<j;k++)
-                dp[i][j%n]=min(dp[k%n][j%n]+dp[i][k%n]+v[i]*v[j%n]*v[k%n],dp[i][j%n]);
+                dp[i][j%n]=min(dp[k%n][j%n]+dp[i][k%n]+v[i]*v[j%n]*v[k%n],dp[i][j%n]); // k is index of triangle with i and j as base
         }
     }
     return dp[0][n-1];
