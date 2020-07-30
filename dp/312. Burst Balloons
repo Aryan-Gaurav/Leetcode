@@ -34,7 +34,7 @@ int maxCoins(vector<int>& v)
 };
 
 //better solution without if else
-
+//16ms
 class Solution {
 public:
 int maxCoins(vector<int>& v) 
