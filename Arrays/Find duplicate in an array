@@ -67,7 +67,7 @@ index: 0 1 2 3 4 5
 value: 0 1 2 4 2 3
 
 we must choose the last element as the head of the linked list. If we choose 0, we can not detect the cycle.
-int findDuplicate(vector<int>& v) 
+int findDuplicate(const vector<int>& v) 
 {
     int n=v.size();
     int fast=v[v[n-1]-1],slow=v[n-1];
