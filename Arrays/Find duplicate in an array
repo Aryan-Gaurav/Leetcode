@@ -44,3 +44,43 @@ int findDuplicate(const vector<int>& v) //could also do by subtracting 1 for bet
     }
     return slow;   
 }
+ALITER:
+suppose the array is
+
+index: 0 1 2 3 4 5
+
+value: 2 5 1 1 4 3
+
+first subtract 1 from each element in the array, so it is much easy to understand.
+use the value as pointer. the array becomes:
+
+index: 0 1 2 3 4 5
+
+value: 1 4 0 0 3 2
+
+![enter image description here][1]
+
+Second if the array is
+
+index: 0 1 2 3 4 5
+
+value: 0 1 2 4 2 3
+
+we must choose the last element as the head of the linked list. If we choose 0, we can not detect the cycle.
+int findDuplicate(vector<int>& v) 
+{
+    int n=v.size();
+    int fast=v[v[n-1]-1],slow=v[n-1];
+    while(fast!=slow)
+    {
+        fast=v[v[fast-1]-1];
+        slow=v[slow-1];
+    } 
+    fast=n;
+    while(fast!=slow)
+    {
+        slow=v[slow-1];
+        fast=v[fast-1];
+    }
+    return fast;   
+}
