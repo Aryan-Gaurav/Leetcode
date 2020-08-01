@@ -1,0 +1,40 @@
+Problem Description
+
+A hotel manager has to process N advance bookings of rooms for the next season. His hotel has K rooms.
+Bookings contain an arrival date and a departure date. He wants to find out whether there are enough rooms in the hotel to satisfy the demand.
+Write a program that solves this problem in time O(N log N) .
+
+Solution 1:Use difference array
+bool Solution::hotel(vector<int> &a, vector<int> &d, int K) 
+{
+    int n=d.size();
+    map<int,int> mp;
+    for(int i=0;i<n;i++)
+    {
+        mp[a[i]]++;
+        mp[d[i]]--;
+    }
+    for(auto itr:mp)
+    {
+        K-=itr.second;
+        if(K<0)
+            return 0;
+    }
+    return K>=0;
+}
+Solution 2:Sorting
+bool Solution::hotel(vector<int> &a, vector<int> &d, int K) 
+{
+    int n=d.size();
+    sort(a.begin(),a.end());
+    sort(d.begin(),d.end());
+    for(int i=0;i<n-K;i++)
+    {
+        if(d[i]>a[i+K])   //check if the current departure can lead to more than K overlaps.
+            return 0;
+    }
+    return 1;
+}
+Solution 3:Two pointers
+
+
