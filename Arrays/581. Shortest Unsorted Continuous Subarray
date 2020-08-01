@@ -1,0 +1,136 @@
+Problem Link https://leetcode.com/problems/shortest-unsorted-continuous-subarray/
+
+Code:
+Solution 1:O(N log N)
+class Solution {
+public:
+int findUnsortedSubarray(vector<int> &v) 
+{
+    int n=v.size();
+    vector<int> a=v;
+    sort(a.begin(),a.end());
+    int l=0,r=n-1;
+    while(l<n&&v[l]==a[l])
+        l++;
+    while(r>=0&&v[r]==a[r])
+        r--;
+    if(r-l<=0)
+        return 0;
+    else return r-l+1;
+}
+};
+Solution 2:O(N) Using STACK
+As soon as the increasing slope or decreasing slope changes we find actual position of that notorious element.
+
+class Solution {
+public:
+int findUnsortedSubarray(vector<int> &v) 
+{
+    int n=v.size();
+    int left=n-1,right=0;
+    stack<int> stk;
+    for(int i=0;i<n;i++)
+    {
+        while(stk.size() && v[stk.top()]>v[i])
+        {
+            left=min(left,stk.top());
+            stk.pop();
+        }
+        stk.push(i);
+    }
+    stk=stack<int>();
+    for(int i=n-1;i>=0;i--)
+    {
+        while(stk.size() && v[stk.top()]<v[i])
+        {
+            right=max(right,stk.top());
+            stk.pop();
+        }
+        stk.push(i);
+    }
+    if(right>left)
+        return right-left+1;
+    else return 0;
+}
+};
+Solution 3:O(N) Time and O(1) space complexity
+The idea of the original solution is to first find an index from left that the corresponding array value breaks the ascending order,
+another index from right that breaks the descending order.Then in the subarray between these two indices, find the min and max values. 
+Back to the array, find the position from left that large than the min value, and the position from right that smaller than the max value, 
+the distance of these two positions will be the answer.
+
+class Solution {
+public:
+int findUnsortedSubarray(vector<int> &v) 
+{
+    int n=v.size();
+    int l=-1,r=-1;
+    for(int i=0;i<n-1;i++)
+    {
+        if(v[i]>v[i+1])
+        {
+            l=i;
+            break;
+        }
+    }
+    if(l==-1)
+        return 0;   //already sorted arary
+    for(int i=n-1;i>0;i--)
+    {
+        if(v[i-1]>v[i])
+        {
+            r=i;
+            break;
+        }
+    }
+    int maxe=-1e9,mine=1e9;
+    for(int i=l;i<=r;i++)     //find min and max element in the range
+    {
+        maxe=max(maxe,v[i]);
+        mine=min(mine,v[i]);
+    }
+    for(int i=0;i<n;i++) //try to improve l
+    {
+        if(v[i]>mine)
+        {
+            l=i;
+            break;
+        }
+    }
+    for(int i=n-1;i>=0;i--) //try to improve r
+    {
+        if(v[i]<maxe)
+        {
+            r=i;
+            break;
+        }
+    }
+    return r-l+1;
+}
+};
+
+ALITER:
+Idea is that in unsorted array the minimum element(this means every element of unsorted array) should be less than maximum of left part of original array.
+Similarly,the maximum of unsorted array must be greater than minimum of right part of orignial array.
+class Solution {
+public:
+int findUnsortedSubarray(vector<int> &v) 
+{
+    int n=v.size();
+    int l=-1,r=-2;
+    int maxe=v[0],mine=v[n-1];
+    for(int i=1;i<n;i++)
+    {
+        maxe=max(maxe,v[i]);
+        if(v[i]<maxe)
+            r=i;
+    }
+    for(int i=n-2;i>=0;i--)
+    {
+        mine=min(mine,v[i]);
+        if(v[i]>mine)
+            l=i;
+    }
+    return r-l+1;
+}
+};
