@@ -1,0 +1,33 @@
+Problem Link:https://leetcode.com/problems/largest-number/
+Given a list of non negative integers, arrange them such that they form the largest number.
+
+Code
+class Solution {
+public:
+static bool cmp(string &s1,string &s2)
+{
+    return s1+s2>s2+s1;
+}
+string largestNumber(vector<int>& x) 
+{
+    vector<string> v;
+    int n=x.size();
+    for(int i=0;i<n;i++)
+    {
+        string s=to_string(x[i]);
+        v.push_back(s);
+    }
+    sort(v.begin(),v.end(),cmp);
+    while(v.size()&&v[0]=="0")
+    {
+       v.erase(v.begin()); 
+    }
+    string ans="";
+    for(int i=0;i<v.size();i++)
+        ans+=v[i];
+    if(ans.size()==0)
+    ans+='0';
+    return ans;
+}
+};
+//12ms
