@@ -37,4 +37,24 @@ bool Solution::hotel(vector<int> &a, vector<int> &d, int K)
 }
 Solution 3:Two pointers
 
-
+bool Solution::hotel(vector<int> &a, vector<int> &d, int K) 
+{
+    int n=d.size();
+    sort(a.begin(),a.end());
+    sort(d.begin(),d.end());
+    int i=0,j=0;
+    int count=0;
+    while(i<n && j<n)
+    {
+        if(a[i]<d[j])
+            count++,i++;
+        else
+        {
+            count--;
+            j++;
+        }
+        if(count>K)
+            return 0;
+    }
+    return 1;
+}
