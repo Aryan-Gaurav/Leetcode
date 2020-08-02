@@ -1,0 +1,24 @@
+Problem Link :https://leetcode.com/problems/spiral-matrix/
+Given a matrix of m x n elements (m rows, n columns), return all elements of the matrix in spiral order.
+
+Code:
+solution 1:
+vector<int> Solution::spiralOrder(const vector<vector<int> > &v) 
+{
+    int n=v.size(),m=v[0].size();
+    vector<int> ans;
+    int count=0;
+    for(int i=0;i<(n+1)/2;i++)
+    {
+        for(int j=i;j<m-i&&count<m*n;j++)
+            ans.push_back(v[i][j]),count++;
+        for(int k=i+1;k<n-i&&count<m*n;k++)
+            ans.push_back(v[k][m-1-i]),count++;
+        for(int j=m-2-i;j>=i&&count<m*n;j--)
+            ans.push_back(v[n-1-i][j]),count++;
+        for(int k=n-2-i;k>i&&count<m*n;k--)
+            ans.push_back(v[k][i]),count++;
+    }
+    return ans;
+}
+Solution 2:Using top,bottom,left,right
