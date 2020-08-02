@@ -1,0 +1,119 @@
+Problem Link
+https://www.interviewbit.com/problems/find-permutation/
+https://leetcode.com/articles/find-permutation/
+
+Description:
+Given a positive integer n and a string s consisting only of letters D or I, you have to find any permutation of first n 
+positive integer that satisfy the given input string.D means the next number is smaller, while I means the next number is greater.
+
+Code:
+Solution 1:
+My AC but long one.N will go to subarray having largest incresing or decreasing number of terms 
+vector<int> Solution::findPerm(const string s, int n) 
+{
+    vector<int> ans(n);
+    vector<int> v(n-1);
+    for(int i=0;i<n-1;i++)
+        if(s[i]=='I')
+            v[i]=1;
+        else v[i]=-1;
+    int global_max=0,itemp=0,istart=-1,iend=-1,x=0;
+    int global_min=0,dtemp=0,dstart=-1,dend=-1,y=0;
+    for(int i=0;i<n-1;i++)
+    {
+        itemp+=v[i];
+        if(itemp>global_max)
+        {
+            istart=x;
+            iend=i;
+            global_max=itemp;
+        }
+        if(itemp<0)
+        {
+            itemp=0;
+            x=i+1;
+        }
+        dtemp+=v[i];
+        if(dtemp<global_min)
+        {
+            dstart=y;
+            dend=i;
+            global_min=dtemp;
+        }
+        if(dtemp>0)
+        {
+            dtemp=0;
+            y=i+1;
+        }
+    }
+    if(global_max>abs(global_min))
+    {
+        ans[iend+1]=n;
+        for(int i=iend;i>=0;i--)
+            ans[i]=ans[i+1]-v[i];
+        for(int i=iend+1;i<n-1;i++)
+            ans[i+1]=ans[i]+v[i];
+    }
+    else
+    {
+        ans[dstart]=n;
+        for(int i=dstart;i<n-1;i++)
+            ans[i+1]=ans[i]+v[i];
+        for(int i=dstart-1;i>=0;i--)
+            ans[i]=ans[i+1]-v[i];
+    }
+    return ans;
+}
+Solution 2:
+Using Stack
+vector<int> Solution::findPerm(const string s, int n) 
+{
+    vector<int> ans(n);
+    stack<int> stk;
+    int j=0;
+    for(int i=0;i<n-1;i++)
+    {
+        if(s[i]=='I')
+        {
+            stk.push(i+1);
+            while(!stk.empty())
+            {
+                ans[j]=stk.top();
+                j++;
+                stk.pop();
+            }
+            
+        }
+        else stk.push(i+1);
+    }
+    stk.push(n);
+    while(!stk.empty())
+    {
+        ans[j]=stk.top();
+        j++;
+        stk.pop();
+    }
+    return ans;
+}
+Solution 3:
+Reverse the subarray having D.
+vector<int> Solution::findPerm(const string s, int n) 
+{
+    vector<int> ans(n);
+    for(int i=0;i<n;i++)
+        ans[i]=i+1;
+    for(int i=0;i<n-1;i++)
+    {
+        if(s[i]=='D')
+        {
+            int start=i,end=i+1;
+            while(s[i]=='D')
+            {
+                end++;
+                i++;
+            }
+            reverse(ans.begin()+start,ans.begin()+end);
+        }
+    }
+    return ans;
+}
