@@ -1,0 +1,36 @@
+Problem Link https://leetcode.com/problems/next-permutation/
+
+Implement the next permutation, which rearranges numbers into the numerically next greater permutation of numbers for a given array A of size N.
+If such arrangement is not possible, it must be rearranged as the lowest possible order i.e., sorted in an ascending order.
+
+KEY IDEA:We try to look for element from right which has any element greater than it on its right.We can now swap that with smallest greater element and proceed.
+We implement the idea as finding the increasing array from right and where the slope breaks then thats the pivot which will have element greater than it in 
+its right.
+
+Code:
+vector<int> nextPermutation(vector<int> &v) 
+{
+    int n=v.size();
+    int pivot=-1;
+    for(int i=n-1;i>0;i--)
+    {
+        if(v[i-1]<v[i]) // finding the pivot which will be swapped or the 1st elemet from right which has capability to be swapped from greater element  
+        {
+            pivot=i-1;
+            break;
+        }
+    }
+    int pos=-1;
+    if(pivot!=-1)
+    {
+        for(int i=n-1;i>pivot;i--)
+            if(v[pivot]<v[i])
+            {
+                pos=i;
+                break;
+            }
+            swap(v[pivot],v[pos]);
+    }
+    reverse(v.begin()+pivot+1,v.end());//as the array is in incresing order from right so simply reverse the array to sort it 
+    return v;
+}
