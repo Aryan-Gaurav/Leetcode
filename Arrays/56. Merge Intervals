@@ -1,0 +1,32 @@
+Problem link 
+https://leetcode.com/problems/merge-intervals/
+https://www.interviewbit.com/problems/merge-overlapping-intervals/
+
+Description:
+Given a collection of intervals, merge all overlapping intervals.
+
+Code:
+static bool cmp(Interval &a,Interval &b)
+{
+    if(a.start!=b.start) return a.start<b.start;
+    return a.end<b.end;
+}
+vector<Interval> Solution::merge(vector<Interval> &v) 
+{
+    sort(v.begin(),v.end(),cmp);
+    for(auto itr=v.begin();itr!=v.end();)
+    {
+        int ed=(*itr).end;
+        auto ptr=itr;
+        while(itr!=v.end()&&(*itr).start<=ed)
+        {
+            ed=max(ed,(*itr).end);
+            itr++;
+        }
+        (*ptr).end=ed;
+        ptr++;
+        if(ptr!=itr)
+        itr=v.erase(ptr,itr);
+    }
+    return v;
+}
