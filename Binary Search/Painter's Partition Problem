@@ -1,0 +1,48 @@
+Problem Link 
+https://www.interviewbit.com/problems/painters-partition-problem/
+
+Description:
+Given 2 integers A and B and an array of integars C of size N.Element C[i] represents length of ith board.
+You have to paint all N boards [C0, C1, C2, C3 … CN-1]. There are A painters available and each of them takes B units of time to paint 1 unit of board.
+Calculate and return minimum time required to paint all boards under the constraints that any painter will only paint contiguous sections of board.
+
+Code:
+Solution 1:N log(sum)
+bool isok(vector<int>&v,long long x,int p)
+{
+    int cnt=0,n=v.size(),i=0;
+    while(i<n)
+    {
+        long long sum=0;
+        while(i<n && v[i]+sum<=x)
+        {
+            sum+=v[i];
+            i++;
+        }
+        if(sum==0) //this means there is some element greater than x
+            return 0;
+        cnt++;
+    }
+    return cnt<=p;//minimum no. of intervals required such 
+                  //that each is less than or eqaul to x
+}
+int Solution::paint(int p, int t, vector<int> &v) 
+{
+    const int mod=10000003;
+    long long sum=0;
+    int n=v.size();
+    if(n<=p) 
+        return ((long long)(*max_element(v.begin(),v.end()))*t)%mod;
+    for(int i=0;i<n;i++)
+        sum+=v[i];
+    long long low=0,high=sum;
+    while(low<=high)
+    {
+        long long mid=(low+high)/2;
+        if(isok(v,mid,p))
+            high=mid-1;
+        else low=mid+1;
+    }
+    return (low*t)%mod; 
+}
+Solution 2:DP
