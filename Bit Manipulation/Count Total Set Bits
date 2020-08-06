@@ -1,0 +1,20 @@
+Problem Link:https://www.interviewbit.com/problems/count-total-set-bits/
+
+Description:
+Given a positive integer A, the task is to count the total number of set bits in the binary representation of all the numbers from 1 to A.
+Return the count modulo 109 + 7.
+
+Solution 1:
+Starting from zero,we have i 0's followed by i 1's on ith bit.
+int Solution::solve(int n) 
+{
+    const int mod=(int)(1e9+7);
+    int ans=0;
+    for(int i=1;i<=1+log2(n);i++)// till number of digits in binary representation
+    {
+        int x=((n+1)>>i)<<(i-1);  //total no. of boxes of 0 and 1 and then no. of 1 in that boxes.
+        x+=max(0,(n+1)%(1<<i)-(1<<(i-1))); //remaining no. of zeroes and ones without full pairing
+        ans=(ans+x)%mod;
+    }
+    return ans;
+}
