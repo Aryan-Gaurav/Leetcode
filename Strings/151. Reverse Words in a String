@@ -1,0 +1,44 @@
+Problem Link:
+https://leetcode.com/problems/reverse-words-in-a-string/
+https://www.interviewbit.com/problems/reverse-the-string/
+
+Description:
+Given an input string, reverse the string word by word.
+Input: "the sky is blue"
+Output: "blue is sky the"
+
+Code:
+Solution 1:
+string Solution::solve(string s) 
+{
+    int n=s.size();
+    int j=n-1;
+    string ans="";
+    while(j>=0 && s[j]==' ') //removing spaces at last
+        j--;
+    while(j>=0)
+    {
+        int len=0;
+        while(j>=0 && s[j]!=' ')
+            j--,len++;
+        ans+=s.substr(j+1,len)+' ';
+        while(j>=0 && s[j]==' ')
+            j--;
+    }
+    ans.erase(ans.begin()+ans.size()-1,ans.end()); //removing extra one spce at last or can use ## ans.pop_back(); ##
+    return ans;
+}
+Solution 2:
+Using stringstream
+
+string Solution::solve(string s) 
+{
+    stringstream x(s);
+    s="";
+   string temp;
+   while(x>>temp)
+    s=temp+' '+s;
+    s.pop_back();
+    return s;
+}
+
