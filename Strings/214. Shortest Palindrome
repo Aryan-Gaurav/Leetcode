@@ -1,0 +1,63 @@
+Problem Link:
+https://leetcode.com/problems/shortest-palindrome/
+https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic/
+
+Description:
+Given a string s, you are allowed to convert it to a palindrome by adding characters in front of it. 
+Find and return the shortest palindrome you can find by performing this transformation.
+
+Code:
+
+Solution 1:
+int solve(string s) //it only calculates the no. of characters required to make the string panindrome
+{
+    string t=s+'#'+string(s.rbegin(),s.rend()); //'#' this is done to ensure that the matching is done with original string only.
+    int n=t.size();
+    int lps[n];
+    lps[0]=0;
+    int j=0;
+    for(int i=1;i<n;i++)  // loop starts with 1 because we will not compare whole substring to itself. 
+    {
+        if(t[i]==t[j])
+            lps[i]=++j;
+        else
+        {
+            while(j!=0 && t[i]!=t[j])
+                j=lps[j-1];
+            if(t[i]==t[j])
+                lps[i]=++j;
+            else lps[i]=j;
+        }
+    }
+    return s.size()-lps[n-1]; //lps[n-1] will give the length of longest palindrome starting at index zero,we donot need to add these characters.
+}
+
+Solution 2:To construct the string
+class Solution {
+public:
+string shortestPalindrome(string s) 
+{
+    string t=s+'#'+string(s.rbegin(),s.rend());
+    int n=t.size();
+    int lps[n];
+    lps[0]=0;
+    int j=0;
+    for(int i=1;i<n;i++)
+    {
+        if(t[i]==t[j])
+            lps[i]=++j;
+        else
+        {
+            while(j!=0 && t[i]!=t[j])
+                j=lps[j-1];
+            if(t[i]==t[j])
+                lps[i]=++j;
+            else lps[i]=j;
+        }
+    }
+    string ans(s.begin()+lps[n-1],s.end());
+    reverse(ans.begin(),ans.end());
+    ans+=s;
+    return ans;
+}
+};
