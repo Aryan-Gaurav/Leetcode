@@ -31,3 +31,23 @@ int Solution::nTriang(vector<int> &v)
     return ans;
 }
 Solution 2:
+Using 3 pointers similar to 3 sum.let a is largest side then valid triangle is when b + c > a.Fix a and check for others.
+int Solution::nTriang(vector<int> &v) 
+{
+    const int mod=(int)(1e9+7);
+    sort(v.begin(),v.end());
+    long long ans=0;
+    int n=v.size();
+    for(int i=n-1;i>=0;i--)
+    {
+        int left=0,right=i-1;
+        while(left<right)
+        {
+            if(v[left]+v[right]>v[i])
+                ans=(ans+right-left)%mod,right--;
+            else left++;
+        }
+    }
+    return ans;
+}
+
