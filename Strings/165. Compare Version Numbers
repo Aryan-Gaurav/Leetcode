@@ -66,3 +66,40 @@ int Solution::compareVersion(string a, string b)
     }
     return 0;
 }
+Solution 2:
+Using stringstream class
+
+int cmp(string a,string b)
+{
+    if(a.size()!=b.size())
+        return a.size()>b.size() ? 1 :-1;
+    int n=a.size();
+    for(int i=0;i<n;i++)
+    {
+        if(a[i]!=b[i])
+            return a[i]>b[i] ? 1 : -1;
+    }
+    return 0;
+}
+int Solution::compareVersion(string a, string b) 
+{
+   for(auto &x:a)
+        if(x=='.')
+            x=' ';
+    for(auto &x:b)
+        if(x=='.')
+            x=' ';
+    stringstream x(a),y(b);
+    string s,t;
+    while(bool(x>>s)+bool(y>>t))
+    {
+        while(!s.empty() && s[0]=='0')
+            s.erase(s.begin());
+        while(!t.empty() && t[0]=='0')
+            t.erase(t.begin());
+        if(int x=cmp(s,t);x!=0)
+            return x;
+        s.clear(),t.clear();    //this done so that after one of the strings gets exhausted the previous value is not retained in it
+    }
+    return 0;
+}
