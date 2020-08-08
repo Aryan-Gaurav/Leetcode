@@ -1,0 +1,16 @@
+Problem Link:
+https://www.interviewbit.com/problems/diffk/
+
+Description:
+Given an array ‘A’ of sorted integers and another non negative integer k, find if there exists 2 indices i and j such that A[i] - A[j] = k, i != j.
+
+Code:
+Solution 1: 
+Use hasing O(N) time O(N) space
+
+Solution 2:O(N lg N) time O(1) space
+Use Binary Search for each v[i]+k from i+1 to n-1
+
+Solution 3:
+O(N) time O(1) space
+Use two pointers intialise each pointer from v[0].If diff < K then right++ else if diff > K left++ or if diff==K then left=right=increment left by 1
