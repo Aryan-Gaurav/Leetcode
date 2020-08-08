@@ -14,3 +14,27 @@ Use Binary Search for each v[i]+k from i+1 to n-1
 Solution 3:
 O(N) time O(1) space
 Use two pointers intialise each pointer from v[0].If diff < K then right++ else if diff > K left++ or if diff==K then left=right=increment left by 1
+Also keep a watch if left and right don't decome equal(k=0).
+
+int Solution::diffPossible(vector<int> &v, int k) 
+{
+    int n=v.size();
+    if(n<2)
+        return 0;
+    int left=0,right=1;
+    int cnt=0;
+    while(right<n)
+    {
+        right=max(right,left+1);
+        long long diff=v[right]-v[left];
+        if(diff==k)
+            cnt++,left++,right++;
+        else if(diff<k)
+            right++;
+        else if(diff>k)
+            left++;
+    }
+    return cnt>0;
+   
+}
+
