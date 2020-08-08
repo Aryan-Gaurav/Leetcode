@@ -1,0 +1,41 @@
+Problem Link:
+https://leetcode.com/problems/3sum/
+https://www.interviewbit.com/problems/3-sum-zero/
+
+Description:
+Given an array nums of n integers, are there elements a, b, c in nums such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.
+
+Note:
+The solution set must not contain duplicate triplets.
+
+Code:
+Solution 1:
+vector<vector<int> > Solution::threeSum(vector<int> &v) 
+{
+    int n=v.size();
+    sort(v.begin(),v.end());
+    vector<vector<int>> ans;
+    for(int i=0;i<n;i++)
+    {
+        int j=i+1,k=n-1;
+        while(j<k)
+        {
+            long long sum=(long long)v[i]+v[j]+v[k];  //everything was same as previous code but this is important because INT_MIN + INT_MIN ==0 
+            if(sum==0)                                //due to underflow
+            {
+                ans.push_back({v[i],v[j],v[k]});
+                while(j<n-1 && v[j]==v[j+1])  // to avoid duplicates
+                    j++;
+                while(k>0 && v[k]==v[k-1])
+                    k--;
+                j++,k--;
+            }
+            else if(sum>0)
+                k--;
+            else j++;
+        }
+        while(i<n-1 && v[i]==v[i+1])
+            i++;
+    }
+    return ans;
+}
