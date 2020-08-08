@@ -1,0 +1,79 @@
+Problem Link:
+https://www.interviewbit.com/problems/pretty-json/
+
+Description:
+Given a string A representating json object. Return an array of string denoting json object with proper indentaion.
+
+Rules for proper indentaion:
+
+Every inner brace should increase one indentation to the following lines.
+Every close brace should decrease one indentation to the same line and the following lines.
+The indents can be increased with an additional ‘\t’
+Note:
+
+[] and {} are only acceptable braces in this case.
+
+Assume for this problem that space characters can be done away with.
+
+Input:
+A = ["foo", {"bar":["baz",null,1.0,2]}]
+Output :
+   [
+        "foo", 
+        {
+            "bar":
+            [
+                "baz", 
+                null, 
+                1.0, 
+                2
+            ]
+        }
+    ]
+    
+    Code:
+    Solution 1:
+    vector<string> Solution::prettyJSON(string s) 
+{
+    vector<string> ans;
+    int n=s.size();
+    int indent=0;
+    for(int i=0;i<n;i++)
+    {
+        if(s[i]==' ') //ignoring whitespaces
+            continue;
+        if(s[i]=='{'||s[i]=='['||s[i]=='}'||s[i]==']')  //marks change in indentation
+        {
+            if(s[i]=='}'||s[i]==']')    //decrease the previous indentation
+                indent--;
+            string temp="";
+            for(int j=0;j<indent;j++) //add the indent
+                temp+='\t';
+            temp+=s[i];
+            if(i<n-1&&(s[i]=='}'||s[i]==']')&&s[i+1]==',') //this is special case for closing brackets followed by , like ## }, ## 
+                temp+=',',i++;
+            ans.push_back(temp);
+            if(s[i]=='{'||s[i]=='[')  //increase indent for subsequent string
+                indent++;
+        }
+        else
+        {
+            string temp="";
+            for(int j=0;j<indent;j++)
+                temp+='\t';
+            while(i<n)
+            {
+                if(s[i]=='{'||s[i]=='['||s[i]=='}'||s[i]==']')
+                {
+                    i--;
+                    break;
+                }
+                temp+=s[i];
+                if(s[i]==',') break;
+                i++;
+            }
+            ans.push_back(temp);
+        }
+    }
+    return ans;
+}
