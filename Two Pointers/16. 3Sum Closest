@@ -1,0 +1,36 @@
+Problem Link:
+https://leetcode.com/problems/3sum-closest/
+
+Description:
+Given an array nums of n integers and an integer target, find three integers in nums such that the sum is closest to target.
+Return the sum of the three integers. You may assume that each input would have exactly one solution.
+
+Code:
+Solution 1:
+class Solution {
+public:
+    int threeSumClosest(vector<int>& v, int target) 
+    {
+        int diff=INT_MAX,ans=INT_MIN;
+        sort(v.begin(),v.end());
+        for(int i=0;i<v.size();i++)
+        {
+            int tar=target-v[i];
+            int lo=i+1,hi=v.size()-1;
+            while(lo<hi)
+            {
+                if(v[lo]+v[hi]==tar)
+                return target;
+                if(abs(v[lo]+v[hi]-tar)<diff)
+                {
+                    ans=v[lo]+v[hi]+v[i];
+                    diff=abs(v[lo]+v[hi]-tar);
+                }
+                if(v[lo]+v[hi]<tar)
+                lo++;
+                else hi--;
+            }
+        }
+        return ans;
+    }
+};
