@@ -14,7 +14,7 @@ Valid combinations are:
 2,2,3
 
 Code:
-Solution 1:
+Solution 1: N^2 lg N
 int Solution::nTriang(vector<int> &v) 
 {
     const int mod=(int)(1e9+7);
@@ -30,3 +30,4 @@ int Solution::nTriang(vector<int> &v)
     }
     return ans;
 }
+Solution 2:
