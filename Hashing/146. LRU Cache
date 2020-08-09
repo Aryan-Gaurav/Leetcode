@@ -1,0 +1,65 @@
+Problem Link:
+https://leetcode.com/problems/lru-cache/
+
+Description:
+Design and implement a data structure for Least Recently Used (LRU) cache. It should support the following operations: get and put.
+
+get(key) - Get the value (will always be positive) of the key if the key exists in the cache, otherwise return -1.
+put(key, value) - Set or insert the value if the key is not already present. When the cache reached its capacity, 
+it should invalidate the least recently used item before inserting a new item.
+
+The cache is initialized with a positive capacity.
+Could you do both operations in O(1) time complexity?
+
+Code:
+Solution 1:Here we use list as it has no iterator invalidation upon deletion of elements.(If that would be not he case we could have use deque)
+
+class LRUCache {
+private:
+    int maxsz=0,count=0;
+    unordered_map<int,int> mp;
+    unordered_map<int,list<int>::iterator> pos;
+    list <int> q;
+public:
+    LRUCache(int capacity) {
+        maxsz=capacity;
+    }
+    
+    int get(int key) 
+    {
+        if(mp.find(key)!=mp.end()) //if its found then also make its recently used. 
+        {
+            auto temp=pos[key];
+            q.erase(temp);
+            q.push_front(key);
+            pos[key]=q.begin();
+            return mp[key];
+        }
+        return -1;
+    }
+    
+    void put(int key, int value) 
+    {
+       if(mp.find(key)!=mp.end()) //if its already there then update
+       {
+            mp[key]=value;
+            auto itr=pos[key];
+            q.erase(itr);
+            q.push_front(key);
+            pos[key]=q.begin();
+       }
+       else
+       {
+            mp[key]=value;
+            q.push_front(key);
+            pos[key]=q.begin();
+            count++;
+            if(count>maxsz)
+            {
+                pos.erase(q.back()),mp.erase(q.back());
+                q.pop_back();
+                count--;
+            }
+       }
+    }
+};
