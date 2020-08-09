@@ -1,0 +1,97 @@
+Problem Link:
+https://leetcode.com/problems/remove-element/
+https://www.interviewbit.com/problems/remove-element-from-array/
+
+Description:
+Given an array nums and a value val, remove all instances of that value in-place and return the new length.
+
+Do not allocate extra space for another array, you must do this by modifying the input array in-place with O(1) extra memory.
+
+The order of elements can be changed. It doesn't matter what you leave beyond the new length.
+
+Example 1:
+
+Given nums = [3,2,2,3], val = 3,
+
+Your function should return length = 2, with the first two elements of nums being 2.
+
+It doesn't matter what you leave beyond the returned length.
+
+Code:
+Solution 1:
+Yet another direction of thought is to consider the elements to be removed as non-existent. 
+In a single pass, if we keep copying the visible elements in-place, that should also solve this problem for us.
+int Solution::removeElement(vector<int> &v, int tar) 
+{
+   int n=v.size();
+   int cnt=0;
+    int i=0,j=0;
+    while(j<n)
+    {
+        if(v[j]!=tar)
+        {
+            v[i]=v[j];
+            i++,j++;
+        }
+        else j++,cnt++; //if v[i]==target then ignore it
+    }
+    n-=cnt;
+   return n;
+}
+Solution 2:
+If we are allowed to break the intial relative ordering of elements then we can do as swapping taget with last value of array which is not equal to target.
+class Solution {
+public:
+    int removeElement(vector<int>& v, int tar) 
+    {
+        int n=v.size();
+        if(n==1)
+            return v[0]!=tar;
+        int cnt=0;
+        int i=0,j=n-1;
+        while(i<=j)//when both point to target then it may miss thats why we use =
+        {
+            if(v[i]==tar)
+            {
+                cnt++;
+                while(i<j && v[j]==tar)
+                    j--,cnt++;
+                swap(v[i],v[j]);
+                j--;
+                i++;
+            }
+            else if(v[j]==tar)
+            cnt++,j--;
+            else i++;
+            
+        }
+        return n-cnt;   
+    }
+};
+class Solution {
+public:
+    int removeElement(vector<int>& v, int tar) 
+    {
+        int n=v.size();
+        if(n==1)
+            return v[0]!=tar;
+        for(int i=0;i<n;)
+        {
+            if(v[i]==tar)
+            {
+                v[i]=v[n-1];
+                v[n-1]=tar;
+                n--;
+            }
+            else i++;
+        }
+        return n;   
+    }
+};
+Solution 3:
+STL is king.
+int Solution::removeElement(vector<int> &v, int tar) 
+{
+   v.erase(remove(v.begin(),v.end(),tar),v.end());
+   return v.size();
+}
