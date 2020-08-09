@@ -1,0 +1,47 @@
+Problem Link:
+https://www.lintcode.com/problem/3sum-smaller/note/190703
+
+Description:
+Given an array of n integers nums and a target, find the number of index triplets i, j, k with 0 <= i < j < k < n that satisfy the condition nums[i] + nums[j] + nums[k] < target.
+
+Example1
+
+Input:  nums = [-2,0,1,3], target = 2
+Output: 2
+Explanation:
+Because there are two triplets which sums are less than 2:
+[-2, 0, 1]
+[-2, 0, 3]
+
+Code:
+Solution 1:
+O(n^2) using two pointers
+class Solution {
+public:
+    /**
+     * @param nums:  an array of n integers
+     * @param target: a target
+     * @return: the number of index triplets satisfy the condition nums[i] + nums[j] + nums[k] < target
+     */
+    int threeSumSmaller(vector<int> &v, int tar) 
+    {
+        int n=v.size();
+        int count=0;
+        sort(v.begin(),v.end());
+        for(int i=0;i<n;i++)
+        {
+            int j=i+1,k=n-1;
+            while(j<k)
+            {
+                long long sum=v[i]+v[j]+v[k];
+                if(sum<tar)
+                {
+                    count+=(k-j);
+                    j++;
+                }
+                else k--;
+            }
+        }
+        return count;
+    }
+};
