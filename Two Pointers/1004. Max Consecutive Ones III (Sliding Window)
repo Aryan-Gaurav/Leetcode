@@ -1,0 +1,37 @@
+Problem Link:
+https://leetcode.com/problems/max-consecutive-ones-iii/
+https://www.interviewbit.com/problems/maximum-ones-after-modification/
+
+Description:
+Given an array A of 0s and 1s, we may change up to K values from 0 to 1.
+
+Return the length of the longest (contiguous) subarray that contains only 1s.
+
+Code:
+Solution 1:
+Use sliding window technique.Here window can grow and shrink in size according to number of zeroes in it
+
+int Solution::solve(vector<int> &v, int k) 
+{
+   int n=v.size();
+    int ans=0,l=0,r=0,cnt=0;
+    while(r<n)
+    {
+        if(v[r]==1) //the configuration of l and r now is valid so calculate its width.
+            ans=max(ans,r-l+1),r++;
+        else if(v[r]==0)
+        {
+            cnt++;
+            while(l<=r && cnt>k)  //if cnt>k then the current configuration is not valid,make it valid by shifting left pointer
+            {
+                if(v[l]==1)
+                    l++;
+                else if(v[l]==0)
+                    l++,cnt--;
+            }
+            ans=max(ans,r-l+1);
+            r++;
+        }
+    }
+    return ans;
+}
