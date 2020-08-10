@@ -1,0 +1,54 @@
+Problem Link:
+https://leetcode.com/problems/binary-tree-inorder-traversal/
+
+FOR Inorder traversal remember left,root,right(value of root matters in every traversal)
+
+Code:
+Solution 1:Using recursion
+
+vector<int> ans;
+ void inorder(TreeNode *root)
+ {
+     if(root==NULL)
+        return;
+    inorder(root->left);
+    ans.push_back(root->val);
+    inorder(root->right);
+ }
+vector<int> Solution::inorderTraversal(TreeNode* root) 
+{
+    ans.clear();
+    inorder(root);
+    return ans;
+}
+
+Solution 2:
+Using stack.Visulaise how the traversal works then read the code.
+vector<int> Solution::inorderTraversal(TreeNode* root) 
+{
+    stack<TreeNode*> stk;
+    vector<int> ans;
+    while(root!=NULL)
+    {
+        stk.push(root);
+        root=root->left;
+    }
+    while(!stk.empty())
+    {
+        auto t=stk.top();
+        stk.pop();
+        ans.push_back(t->val);
+        if(t->right!=NULL)
+        {
+            t=t->right;
+            while(t!=NULL)
+            {
+                stk.push(t);
+                t=t->left;
+            }
+        }
+    }
+    return ans;
+}
+
+Solution 3:Morris Traversal(TODO) 
