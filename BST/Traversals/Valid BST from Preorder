@@ -1,0 +1,42 @@
+Problem Link:
+https://www.interviewbit.com/problems/valid-bst-from-preorder/
+
+Refrence:
+https://stackoverflow.com/a/42285266/13543838
+
+Description:
+You are given a preorder traversal A, of a Binary Search Tree.
+
+Find if it is a valid preorder traversal of a BST.
+
+Code:
+Solution 1:O(N^2)
+1st element of the traversal is a root node then it will contain left sub-tree(all elements smaller or equal to root) and then it will contain right sub-tree
+(all elements are greater than root node).That means if we ecounter any value less than root node in right subtree then its invalid.Right subtree starts after at 
+next greater element of root node and now after that if we encounter any value less than root then its invalid.
+Check this using two nested loops.
+
+Solution 2:O(N) using STACK
+Recall the idea we used to find the next greater element using stack.We checked for each v[i] if stack.top() contains value less or equal to v[i] then push it 
+otherwise pop till stack.top()>v[i].Just here maintain a root variable to store the root of the tree whose right subtree starting is going to be marked by v[i].
+And then during exploring next elements just see if the value of v[i] is not smaller than root of tree.Intialise root as INT_MIN.
+
+int Solution::solve(vector<int> &v) 
+{
+    int n=v.size();
+    int root=INT_MIN;
+    stack<int> stk;
+    for(int i=0;i<n;i++)
+    {
+        if(v[i]<root)
+            return 0;
+       while(!stk.empty() and v[stk.top()]<v[i]) //same as NGE,update root in the process
+       {
+           root=v[stk.top()];
+           stk.pop();
+       }
+       stk.push(i);
+    }
+    return 1;
+}
+
