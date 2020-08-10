@@ -1,0 +1,28 @@
+Problem Link:
+https://leetcode.com/problems/container-with-most-water/
+https://www.interviewbit.com/problems/container-with-most-water/
+
+Description:
+Given n non-negative integers a1, a2, ..., an , where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints 
+of line i is at (i, ai) and (i, 0). Find two lines, which together with x-axis forms a container, such that the container contains the most water.
+
+Note: You may not slant the container and n is at least 2.
+
+Solution 1:O(N)
+The area depends on two things, the width of container and minimum of height of two rods.We first start by considering the container with maximum width, the start
+to decrease the width.If we want to increase the height of container then we must discard the rod with smallest height among two because dicarding lager will not
+increase the area.
+int Solution::maxArea(vector<int> &v) 
+{
+    int n=v.size();
+    int left=0,right=n-1;
+    int ans=0;
+    while(left<right)
+    {
+        ans=max(ans,(right-left)*min(v[right],v[left]));
+        if(v[left]<v[right])
+            left++;
+        else right--;
+    }
+    return ans;
+}
