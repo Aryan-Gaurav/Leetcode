@@ -1,0 +1,63 @@
+Problem Link:
+https://leetcode.com/problems/binary-tree-preorder-traversal/
+
+Description:
+Given a binary tree, return the preorder traversal of its nodes' values.
+
+Example:
+
+Input: [1,null,2,3]
+   1
+    \
+     2
+    /
+   3
+
+Output: [1,2,3]
+Follow up: Recursive solution is trivial, could you do it iteratively?
+
+Code:
+Solution 1:
+Using recursion.
+
+class Solution {
+public:
+    vector<int> ans;
+    void preorder(TreeNode *root)
+    {
+        if(root==NULL)
+            return;
+        ans.push_back(root->val);
+        preorder(root->left);
+        preorder(root->right);
+    }
+    vector<int> preorderTraversal(TreeNode* root) 
+    {
+        ans.clear();
+        preorder(root);
+        return ans;   
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) 
+    {
+     stack<TreeNode*> stk;
+    vector<int> ans;
+    stk.push(root);
+    while(!stk.empty())
+    {
+        auto t=stk.top();
+        stk.pop();
+        if(t!=NULL)
+        {
+            ans.push_back(t->val);
+            stk.push(t->right); 	//observe that we want to evaluate left after root so we don't need right just now So push it first
+            stk.push(t->left);		//we push left atlast so that it is popped next time 
+        }
+    }
+    return ans;   
+    }
+};
