@@ -6,6 +6,9 @@ Description:
 Given an array A of 0s and 1s, we may change up to K values from 0 to 1.
 
 Return the length of the longest (contiguous) subarray that contains only 1s.
+Follow up:
+What if the input numbers come in one by one as an infinite stream? In other words, you can't store all numbers coming from the stream as 
+it's too large to hold in memory.Could you solve it efficiently?
 
 Code:
 Solution 1:
@@ -35,3 +38,30 @@ int Solution::solve(vector<int> &v, int k)
     }
     return ans;
 }
+
+Solution 2:(Follow up using Queue)
+When the input stream is continuous.We use a queue to store indices of zeroes encountered.
+class Solution {
+public:
+    int longestOnes(vector<int>& v, int k) 
+    {
+        int n=v.size();
+        int left=0,right=0,ans=0;
+        queue<int> q;
+        while(right<n)
+        {
+            if(v[right]==0)
+            {
+                q.push(right);
+                if(q.size()>k)
+                {
+                    left=q.front()+1;
+                    q.pop();
+                }
+            }
+            ans=max(ans,right-left+1);
+            right++;
+        }
+    return ans;
+    }
+};
