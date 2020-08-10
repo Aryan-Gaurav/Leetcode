@@ -1,0 +1,34 @@
+Problem Link:
+https://www.interviewbit.com/problems/array-3-pointers/
+
+Description:
+You are given 3 arrays A, B and C. All 3 of the arrays are sorted.
+
+Find i, j, k such that :
+max(abs(A[i] - B[j]), abs(B[j] - C[k]), abs(C[k] - A[i])) is minimized.It is same as ( max(a,b,c) - min(a,b,c) )
+Return the minimum max(abs(A[i] - B[j]), abs(B[j] - C[k]), abs(C[k] - A[i]))
+
+Code:
+Solution 1:O(N lg N)
+Fix each element of A ,B and C as smallest element and use binary search to find just greater element in other two arrays.Update the answer.
+
+Solution 2:O(N)
+Intialise 3 pointers as i,j,and k as 0.
+Now calculate the answer.Increment the smallest elemnt among three as increasing it will try to decrease the overall minimum of the 3 and hence the ans.
+int Solution::minimize(const vector<int> &a, const vector<int> &b, const vector<int> &c) 
+{
+    int i=0,j=0,k=0;
+    int x=a.size(),y=b.size(),z=c.size();
+    long long ans=1e18;
+    while(i<x and j<y and k<z)
+    {
+        int cmp=min({a[i],b[j],c[k]});
+        long long d1=abs(a[i]-b[j]),d2=abs(b[j]-c[k]),d3=abs(c[k]-a[i]);
+        ans=min(max({d1,d2,d3}),ans);
+        if(cmp==a[i]) i++;
+        else if(cmp==b[j]) j++;
+        else k++;
+    }
+    return ans;
+}
+
