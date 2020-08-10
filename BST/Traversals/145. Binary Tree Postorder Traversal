@@ -1,0 +1,109 @@
+Problem Link:
+https://leetcode.com/problems/binary-tree-postorder-traversal/
+
+Description:
+Given a binary tree, return the postorder traversal of its nodes' values.
+
+Example:
+
+Input: [1,null,2,3]
+   1
+    \
+     2
+    /
+   3
+
+Output: [3,2,1]
+Follow up: Recursive solution is trivial, could you do it iteratively?
+
+Code:
+Solution 1:
+Recursive solution.
+
+class Solution {
+public:
+    vector<int> ans;
+    void helper(TreeNode *root)
+    {
+        if(root==NULL)
+            return;
+        helper(root->left);
+        helper(root->right);
+        ans.push_back(root->val);
+    }
+    vector<int> postorderTraversal(TreeNode* root) 
+    {
+        ans.clear();
+        helper(root);
+        return ans;
+    }
+};
+
+Solution 2:
+This is a non-tail recursion as it contains non-recursive calls at end of the function.So it is hard to implement using stacks.
+
+Using Two Stacks.Idea is to store reverse post order traversal in a result stack and then print it.
+This is done by left,right,root so we need root 1st pushed in result stack then right then left.So implement preorder traversal like concept with root,right,left.
+Now the difference is that instead of printing the value just after popping, push it in result stack.At last print the result stack by popping(Alternatively,
+we can only reverse the array).
+
+vector<int> Solution::postorderTraversal(TreeNode* root) 
+{
+    stack<TreeNode*> stk,result;
+    vector<int> ans;
+    stk.push(root);
+    while(!stk.empty())
+    {
+        auto t=stk.top();
+        stk.pop();
+        if(t!=NULL)
+        {
+            result.push(t);
+            stk.push(t->left);
+            stk.push(t->right);
+        }
+    }
+    while(!result.empty())
+    {
+        ans.push_back(result.top()->val);
+        result.pop();
+    }
+    return ans;
+}
+Solution 3:
+Using one stack.
+Idea is to push root two times when going left.When we pop an element the we check if its equal to the stack.top().If its equal then its time to explore right
+subtree in similar fashion to root.Else just print the element.
+
+class Solution {
+public:
+    
+    vector<int> postorderTraversal(TreeNode* root) 
+    {
+        stack<TreeNode*> stk;
+        vector<int> ans;
+        while(root!=NULL)
+        {
+            stk.push(root);
+            stk.push(root);
+            root=root->left;
+        }
+        while(!stk.empty())
+        {
+            auto t=stk.top();
+            stk.pop();
+            if(!stk.empty() && t==stk.top())
+            {
+                t=t->right;
+                while(t!=NULL)
+                {
+                    stk.push(t);
+                    stk.push(t);
+                    t=t->left;
+                }
+            }
+            else ans.push_back(t->val);
+        }
+        return ans;
+    }
+};
