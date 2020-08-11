@@ -1,0 +1,49 @@
+Problem Link:
+https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/
+
+Description:
+Given a binary tree, return the vertical order traversal of its nodes values.
+
+For each node at position (X, Y), its left and right children respectively will be at positions (X-1, Y-1) and (X+1, Y-1).
+
+Running a vertical line from X = -infinity to X = +infinity, whenever the vertical line touches some nodes, we report the values of the 
+nodes in order from top to bottom (decreasing Y coordinates).
+
+If two nodes have the same position, then the value of the node that is reported first is the value that is smaller.
+
+Return an list of non-empty reports in order of X coordinate.  Every report will have a list of values of nodes.
+
+Code:
+Solution 1:
+
+class Solution {
+public:
+    multiset<pair<pair<int,int>,int>> mp;   //so that at one pos(x,y) if there are two values report smaller one and if they are repeated then report both.
+    void help(TreeNode* root,int x,int y)
+    {
+        if(root==NULL)
+            return;
+        mp.insert({{x,y},root->val});
+        help(root->left,x-1,y+1);
+        help(root->right,x+1,y+1);
+    }
+    vector<vector<int>> verticalTraversal(TreeNode* root) 
+    {
+        mp.clear();
+        help(root,0,0);
+        vector<vector<int>> ans;
+        for(auto itr=mp.begin();itr!=mp.end();)
+        {
+            vector<int> temp;
+            auto ptr=itr;
+            while(ptr!=mp.end() and ptr->first.first==itr->first.first)
+            {
+                temp.push_back(ptr->second);
+                ptr++;
+            }
+            ans.push_back(temp);
+            itr=ptr;
+        }
+        return ans;
+    }
+};
