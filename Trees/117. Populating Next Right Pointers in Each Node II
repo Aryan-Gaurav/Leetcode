@@ -1,0 +1,71 @@
+Problem Link:
+https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/
+https://www.interviewbit.com/problems/populate-next-right-pointers-tree/
+
+Description:
+Given a binary tree
+
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
+
+Initially, all next pointers are set to NULL.
+
+Follow up:
+
+You may only use constant extra space.
+Recursive approach is fine, you may assume implicit stack space does not count as extra space for this problem.
+
+Code:
+Solution 1:
+Using queue is trivial.For details refer its 1st counterpart.
+
+Solution 2:
+O(N) time and O(1) space
+
+Idea is to iterate the current level(level 1) which is connected and to use it to update pointers of node of next level(level 2).For that we have to 
+use curr pointer of current level and last pointer in next level whose answer is unknown(or whose you want to calculate).But there is one problem that 
+after taversing level 1 and updating the level 2 right pointers, we have lost the access to starting of level 2,so we use a start pointer to tackle this problem.
+We save the starting pointer of level 2 and after full updates(ie after level 1 curr pointer goes to end) just upadte curr to start and again find start and
+last of next level 3.
+
+class Solution {
+public:
+    Node* connect(Node* root) 
+    {
+        auto curr=root;
+        
+        while(curr!=NULL)
+        {
+            Node *start=NULL,*last=NULL;  //used to store starting of level 2 and node whose right node is to be found
+            while(curr!=NULL) //till level 1 is fully traversed
+            {
+                if(curr->left!=NULL)  //we got a node
+                {
+                    if(start!=NULL)     //if we already have starting node then just update right node of last and increment it
+                    {
+                       last->next=curr->left;
+                        last=last->next;
+                    }
+                    else start=curr->left,last=curr->left;  //now check if we have starting of level 2 or not, if not then thats it we have found it now.
+                }
+                if(curr->right!=NULL) //again we got a node...rest is similar to left node
+                {
+                    if(start!=NULL)
+                    {
+                        last->next=curr->right;
+                        last=last->next;
+                    }
+                    else start=curr->right,last=curr->right;
+                }
+                curr=curr->next;  //now we wish to explore next node in level 1
+            }
+            curr=start;   //now ths level 2 is done....go for level 3
+        }
+        return root;
+    }
+};
