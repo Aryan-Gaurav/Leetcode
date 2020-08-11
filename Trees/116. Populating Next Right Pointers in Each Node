@@ -1,0 +1,93 @@
+Problem Link:
+https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+Description:
+You are given a perfect binary tree where all leaves are on the same level, and every parent has two children. The binary tree has the following definition:
+
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
+
+Initially, all next pointers are set to NULL.
+
+ 
+
+Follow up:
+
+You may only use constant extra space.
+Recursive approach is fine, you may assume implicit stack space does not count as extra space for this problem.
+
+Code:
+
+Solution 1:
+
+O(N) time and O(N) extra space solution.
+Idea is simple level order traversal and set last node to NULL.
+
+class Solution {
+public:
+    Node* connect(Node* root) 
+    {
+        if(root==NULL)
+            return root;
+        queue<Node *> q;
+        q.push(root);
+        while(!q.empty())
+        {
+            int n=q.size();
+            for(int i=0;i<n-1;i++)
+            {
+                auto t=q.front();
+                q.pop();
+                t->next=q.front();
+                if(t->left)
+                    q.push(t->left);
+                if(t->right)
+                    q.push(t->right);
+            }
+            auto t=q.front();
+            t->next=NULL;
+            if(t->left)
+                q.push(t->left);
+            if(t->right)
+                q.push(t->right);
+            q.pop();
+        }
+        return root;
+    }
+};
+
+Solution 2:
+Using O(1) extra space.Iterative
+Idea is to use the current pointer and update the next pointer of its left child as its right child and next pointer of its right child as left of its next node.
+Use this to taverse the tree in horizontal direction, when we reach the end then update current to left of the starting node of current level.
+
+class Solution {
+public:
+    Node* connect(Node* root) 
+    {
+        if(root==NULL)
+            return root;
+        auto curr=root;
+        while(curr!=NULL)
+        {
+            auto temp=curr;   //save this so that we can traverse downwards when we have traversed the whole level
+            while(curr!=NULL)
+            {
+                if(curr->left!=NULL)
+                    curr->left->next=curr->right; //update next of left child as right child
+                if(curr->right!=NULL and curr->next!=NULL)  //update next of right child as next node's left child if it exists. 
+                {
+                    curr->right->next = curr->next->left;
+                }
+                curr=curr->next;
+            }
+            curr=temp->left;  //here we move to down next level
+        }
+        return root;
+    }
+};
