@@ -15,7 +15,7 @@ Leaves should not be touched as they have both children as NULL
 Code:
 Solution 1:
 Using recursion.
-First find what is going to happen to left and right nodes...after that update anser for current node
+First find what is going to happen to left and right nodes...after that update answer for current node
 TreeNode * helper(TreeNode * root)
 {
     if(root==NULL)
