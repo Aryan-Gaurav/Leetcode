@@ -1,0 +1,36 @@
+Problem Link:
+https://www.interviewbit.com/problems/remove-half-nodes/
+
+Description:
+
+Given a binary tree A with N nodes.
+
+You have to remove all the half nodes and return the final binary tree.
+
+NOTE:
+
+Half nodes are nodes which have only one child.
+Leaves should not be touched as they have both children as NULL
+
+Code:
+Solution 1:
+Using recursion.
+First find what is going to happen to left and right nodes...after that update anser for current node
+TreeNode * helper(TreeNode * root)
+{
+    if(root==NULL)
+     return root;
+    root->left=helper(root->left);
+    root->right=helper(root->right);
+    if(root->left==NULL and root->right==NULL)
+        return root;
+    if(root->left==NULL and root->right!=NULL)
+        return root->right;
+    if(root->right==NULL and root->left!=NULL)
+        return root->left;
+    return root;
+}
+TreeNode* Solution::solve(TreeNode* root) 
+{
+    return helper(root);
+}
