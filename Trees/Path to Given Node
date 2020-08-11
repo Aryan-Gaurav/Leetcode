@@ -1,0 +1,42 @@
+Problem Link:
+https://www.interviewbit.com/problems/path-to-given-node/
+
+Description:
+Given a Binary Tree A containing N nodes.
+
+You need to find the path from Root to a given node B.
+
+NOTE:
+
+No two nodes in the tree have same data values.
+You can assume that B is present in the tree A and a path always exists.
+
+Code:
+
+Solution 1:
+Use functions which returns true if x is found inits left or right subtree.It means the current node must be in path of x.So push it in ans vector.
+
+vector<int> ans;
+bool isfound(TreeNode *root,int x)
+{
+    if(root==NULL)
+        return false;
+    if(root->val==x)
+    {
+        ans.push_back(root->val);
+        return 1;
+    }
+    bool isok=isfound(root->left,x)||isfound(root->right,x);
+    if(isok)
+        ans.push_back(root->val);
+    return isok;
+}
+vector<int> Solution::solve(TreeNode* root, int x) 
+{
+    ans.clear();    //always remember to clear global variables in case of functions as multiples test cases run.
+    if(root==NULL)
+        return {};
+    isfound(root,x);
+    reverse(ans.begin(),ans.end());
+    return ans;
+}
