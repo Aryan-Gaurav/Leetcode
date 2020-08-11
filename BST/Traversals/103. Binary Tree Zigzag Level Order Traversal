@@ -1,0 +1,174 @@
+Problem LInk:
+https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/
+
+Description:
+Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then right to left for 
+the next level and alternate between).
+
+For example:
+Given binary tree [3,9,20,null,null,15,7],
+    3
+   / \
+  9  20
+    /  \
+   15   7
+return its zigzag level order traversal as:
+[
+  [3],
+  [20,9],
+  [15,7]
+]
+
+Code:
+Solution 1: reversing alternate arrays of pre order traversal.
+
+class Solution {
+public:
+    vector<vector<int>> zigzagLevelOrder(TreeNode* root) 
+    {
+        queue<pair<TreeNode*,int>> q;
+        q.push({root,0});
+        vector<vector<int>> ans;
+        vector<int> temp;
+        int level=0;
+        
+        while(!q.empty())
+        {
+            auto t=q.front();
+            q.pop();
+            if(level!=t.second)
+                    level=t.second,ans.push_back(temp),temp.clear();
+            if(t.first!=NULL)
+            {
+                q.push({t.first->left,t.second+1});
+                q.push({t.first->right,t.second+1});
+                temp.push_back(t.first->val);
+            }
+        }
+        for(int i=1;i<ans.size();i+=2)
+        {
+            reverse(ans[i].begin(),ans[i].end());
+        }
+        return ans;
+    }
+};
+Aliter:
+
+class Solution {
+public:
+    vector<vector<int>> zigzagLevelOrder(TreeNode* root) 
+    {
+        queue<pair<TreeNode*,int>> q;
+        q.push({root,0});
+        vector<vector<int>> ans;
+        while(!q.empty())
+        {
+            auto t=q.front();
+            q.pop();
+            if(t.first!=NULL)
+            {
+                q.push({t.first->left,t.second+1});
+                q.push({t.first->right,t.second+1});
+                if(ans.size()<t.second+1)
+                {
+                    vector<int> temp;
+                    temp.push_back(t.first->val);
+                    ans.push_back(temp);
+                }
+                else ans[t.second].push_back(t.first->val);
+            }
+        }
+        for(int i=1;i<ans.size();i+=2)
+        {
+            reverse(ans[i].begin(),ans[i].end());
+        }
+        return ans;
+    }
+};
+
+Solution 2:
+Without reversing the array.
+class Solution {
+public:
+    vector<vector<int>> zigzagLevelOrder(TreeNode* root) 
+    {
+        if(root==NULL)
+            return {};
+        queue<TreeNode*> q;
+        q.push(root);
+        vector<vector<int>> ans;
+        bool level=0;
+        while(!q.empty())
+        {
+            int sz=q.size();
+            vector<int> temp(sz);
+            for(int i=0;i<sz;i++)
+            {
+                auto t=q.front();
+                q.pop();
+                if(level==0)
+                    temp[i]=t->val;
+                else if(level==1)
+                    temp[sz-1-i]=t->val;
+                if(t->left)
+                    q.push(t->left);
+                if(t->right)
+                    q.push(t->right);
+            }
+            ans.push_back(temp);
+            level^=1;
+        }
+        return ans;
+    }
+};
+Solution 3:
+Using dequeue and alternating between push_back() and push_front().
+Just make a tree and observe that for even level we must pop_font() and  then push the left childe and then right child from back.
+For an odd level we must pop from back and then push from front the right child first and then left child.
+class Solution {
+public:
+    vector<vector<int>> zigzagLevelOrder(TreeNode* root) 
+    {
+        if(root==NULL)
+            return {};
+        deque<TreeNode*> q;
+        q.push_back(root);
+        vector<vector<int>> ans;
+        bool level=0;
+        while(!q.empty())
+        {
+            int sz=q.size();
+            vector<int> temp;
+            while(sz--)
+            {
+                if(level==0)
+                {
+                    auto t=q.front();
+                    q.pop_front();
+                    if(t!=NULL)
+                    {
+                        temp.push_back(t->val);
+                        q.push_back(t->left);
+                        q.push_back(t->right);
+                    }
+                    
+                }
+                else if(level==1)
+                {
+                   auto t=q.back();
+                    q.pop_back();
+                    if(t!=NULL)
+                    {
+                        temp.push_back(t->val);
+                        q.push_front(t->right);   //observe that if we are on odd level we first push from front the right node.
+                        q.push_front(t->left);
+                    }
+                }
+            }
+            if(temp.size()) //to make sure that we dont push an empty vector(alternatively we can onlu push a node which is not NULL)
+            ans.push_back(temp);
+            level^=1;
+        }
+        return ans;
+    }
+};
