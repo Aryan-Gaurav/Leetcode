@@ -12,8 +12,9 @@ it's too large to hold in memory.Could you solve it efficiently?
 
 Code:
 Solution 1:
-Use sliding window technique.Here window can grow and shrink in size according to number of zeroes in it
-
+Use sliding window technique.Here window can grow and shrink in size according to number of zeroes in it.
+### Main point to remember in sliding window is that it genrally applies to at most k conditions.###
+### If you want to evaluate exactly k condition then find for K and K-1 then sbutract them ###
 int Solution::solve(vector<int> &v, int k) 
 {
    int n=v.size();
