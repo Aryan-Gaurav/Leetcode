@@ -1,0 +1,107 @@
+Problem Link:
+https://www.interviewbit.com/problems/cousins-in-binary-tree/
+
+Description:
+Given a Binary Tree A consisting of N nodes.
+
+You need to find all the cousins of node B.
+
+NOTE:
+
+Siblings should not be considered as cousins.
+Try to do it in single traversal.
+You can assume that Node B is there in the tree A.
+Order doesn't matter in the output.
+Example Input
+ A =
+
+           1
+         /   \
+        2     3
+       / \   / \
+      4   5 6   7 
+
+
+B = 5
+
+Example Output
+Output 1:
+
+ [6, 7]
+ 
+ Code:
+ 
+ Solution 1:Recursive solution
+ 
+ map<int,vector<int>> mp;
+void helper(TreeNode *root,int tar,int levl,int &ans)
+{
+    if(root==NULL)
+        return;
+    if((root->left and root->left->val==tar) or (root->right and root->right->val==tar))
+    {
+        ans=levl;
+        return;
+    }
+    mp[levl].push_back(root->val);
+    helper(root->left,tar,levl+1,ans);
+    helper(root->right,tar,levl+1,ans);
+}
+vector<int> Solution::solve(TreeNode* root, int tar) 
+{
+    mp.clear();
+    int level=-1;
+    helper(root,tar,0,level);
+    vector<int> ans;
+    if(level!=-1)
+    {
+        for(auto x:mp[level+1])
+            ans.push_back(x);
+    }
+    return ans;
+}
+ 
+ Solution 2:
+ Idea is to do in-order traversal of tree and check if its child is desired target.If the target's parent is found,then all the nodes in that 
+ level except the parent will contribute to cousions.
+ vector<int> Solution::solve(TreeNode* root, int tar) 
+{
+    vector<int> ans;
+    queue<TreeNode *> q;
+    q.push(root);
+    while(!q.empty())
+    {
+        int n=q.size();
+        bool ok=0;
+        for(int i=0;i<n;i++)
+        {
+            auto t=q.front();
+            q.pop();
+            if(t->left and t->left->val==tar)
+            {
+                ok=1;
+                continue;
+            }
+            if(t->right and t->right->val==tar)
+           {
+                ok=1;
+                continue;
+            }
+            if(t->left)
+                q.push(t->left);
+            if(t->right)
+                q.push(t->right);
+        }
+        if(ok)
+        {
+            while(!q.empty())
+            {
+                auto t=q.front();
+                q.pop();
+                ans.push_back(t->val);
+            }
+            return ans;
+        }
+    }
+    return ans;
+}
