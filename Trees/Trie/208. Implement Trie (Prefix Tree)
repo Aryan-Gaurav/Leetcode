@@ -1,0 +1,94 @@
+Problem Link:
+https://leetcode.com/problems/implement-trie-prefix-tree/
+
+Description:
+
+Implement a trie with insert, search, and startsWith methods.
+
+Example:
+
+Trie trie = new Trie();
+
+trie.insert("apple");
+trie.search("apple");   // returns true
+trie.search("app");     // returns false
+trie.startsWith("app"); // returns true
+trie.insert("app");   
+trie.search("app");     // returns true
+Note:
+
+You may assume that all inputs are consist of lowercase letters a-z.
+All inputs are guaranteed to be non-empty strings.
+
+Code:
+Solution 1:
+We keep a master node of trie and define nodes of trie as node having 26 pointers (a-z) for next character and a counter to count how many words end after
+a particular node.
+
+class Trie {
+private:
+    struct node
+    {
+        node* index[26]={NULL};
+        int eow=0;
+    };
+    node* master;
+public:
+    /** Initialize your data structure here. */
+    Trie() 
+    {
+       master= new node;
+    }
+    
+    /** Inserts a word into the trie. */
+    void insert(string word) 
+    {
+        int n=word.size();
+        auto t=master;
+        for(int i=0;i<n;i++)
+        {
+            if(t->index[word[i]-'a']==NULL)
+            {
+                t->index[word[i]-'a']= new node;
+            }
+            t=t->index[word[i]-'a'];
+        }
+        t->eow++;
+    }
+    
+    /** Returns if the word is in the trie. */
+    bool search(string word) 
+    {
+        int n=word.size();
+        auto t=master;
+        for(int i=0;i<n;i++)
+        {
+            if(t->index[word[i]-'a']==NULL)
+                return 0;
+            else t=t->index[word[i]-'a'];
+        }
+        return t->eow!=0;
+    }
+    
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    bool startsWith(string prefix) 
+    {
+        int n=prefix.size();
+        auto t=master;
+        for(int i=0;i<n;i++)
+        {
+            if(t->index[prefix[i]-'a']==NULL)
+                return 0;
+            t=t->index[prefix[i]-'a'];
+        }
+        return t!=NULL;
+    }
+};
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie* obj = new Trie();
+ * obj->insert(word);
+ * bool param_2 = obj->search(word);
+ * bool param_3 = obj->startsWith(prefix);
+ */
