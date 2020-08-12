@@ -57,7 +57,7 @@ vector<int> Solution::solve(TreeNode* root)
 Solution 2:
 Iterative using queue.
 Idea is to use a delimiter(NULL) to mark the starting and end of a diagonal.When we encounter a node, we explore its right node and push the left node
-(for next diagonal, it must be NOT NULL) in queue.As soon as the element is popped and front of queue is NULL we know that the current diagonal has ended
+(for next diagonal, it must be NOT NULL) in queue.As soon as the element is popped and its is NULL we know that the current diagonal has ended
 and the nodes for generating next diagonal is in the queue we just push NULL in back to mark end of the incoming diagonal.We also increase the counter 
 of diagonal number.For generating the 1st diagonal, we need only root so push root then NULL.
 
@@ -72,31 +72,24 @@ vector<int> Solution::solve(TreeNode* root)
     {
         auto t=q.front();
         q.pop();
-        if(!q.empty())
-        {
-            if(q.front()==NULL)
-            {
-                q.push(NULL);
-                i++;
-                q.pop();
-            }
+        if(t==NULL and !q.empty())  //check if the front is NULL and the queue is not empty(ie it contains nodes for next diagonal) then mark the end of incoming 
+        {                           //diagonal
+            q.push(NULL);
+            i++;
         }
-        if(t!=NULL)
-        {
-           while(t!=NULL)
-           {
-               mp[i].push_back(t->val);
-               if(t->left)    //check so that the node is valid for generating the next diagonal
-               q.push(t->left);
-               t=t->right;
-           }
-        }
+       while(t!=NULL)
+       {
+           mp[i].push_back(t->val);
+           if(t->left)    //check so that the node is valid for generating the next diagonal
+           q.push(t->left);
+           t=t->right;
+       }
     }
     vector<int> ans;
     for(auto itr:mp)
     {
         for(auto x:itr.second)
-            ans.push_back(x);
+                ans.push_back(x);
     }
     return ans;
 }
