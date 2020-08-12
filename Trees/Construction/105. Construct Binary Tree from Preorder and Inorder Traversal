@@ -1,0 +1,102 @@
+Problem Link:
+https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
+
+Description:
+
+Given preorder and inorder traversal of a tree, construct the binary tree.
+
+Note:
+You may assume that duplicates do not exist in the tree.
+
+For example, given
+
+preorder = [3,9,20,15,7]
+inorder = [9,3,15,20,7]
+Return the following binary tree:
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+ 
+Code:
+
+Solution 1:
+Kind of brute-force.We aim to construct tree from inorder traversal.We find root node and then recurse for left sub-tree and right subtree.
+For finding the root node we store indicies of nodes in preorder traversal.Then we traverse nodes in range and find out whose index is lowest.
+We the recurse of left subtree and right subtree.
+O(N^2) time
+
+class Solution {
+public:
+    unordered_map<int,int> mp;
+    TreeNode* help(vector<int> &inorder,int i,int j)
+    {
+        if(i==j)
+        {
+            auto root= new TreeNode(inorder[i]);
+            return root;
+        }
+        if(i>j)
+            return NULL;
+        int pos=-1,elem=INT_MAX;
+        for(int k=i;k<=j;k++)
+        {
+            if(mp[inorder[k]]<elem)
+                pos=k,elem=mp[inorder[k]];
+        }
+        auto root = new TreeNode(inorder[pos]);
+        root->left=help(inorder,i,pos-1);
+        root->right=help(inorder,pos+1,j);
+        return root;
+    }
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) 
+    {
+        mp.clear();
+        int n=preorder.size();
+        for(int i=0;i<n;i++)
+            mp[preorder[i]]=i;
+        return help(inorder,0,n-1);
+    }
+};
+//500 ms
+Solution 2:
+Here the idea is same i.e. to construct tree from inorder traversal and recurse for left subtree and right subtree. Here we donot traverse the whole
+inorder traversal for searching the root of tree instead we use the first element of pre order traversal and find its postion in inorder traversal (to do this
+effectively we store indices of nodes in inorder traversal in map).Here the catch is to use range for both pre order taversal and in-order traversal and use the
+first element of preorder as root. Now find pos of this root in in-order traversal and find length of left sub-tree. In the post order traversal,after root there
+will be left subtree elements whose length we have calculated so we can find start and end pos for both the sub trees in both types of traversals.
+
+class Solution {
+public:
+    unordered_map<int,int> mp;
+    TreeNode* help(vector<int> &preorder,vector<int> &inorder,int pstart,int pend,int i,int j)
+    {
+        if(i==j)  // i and j are indicies of inorder traversal.This is case of leaf node.
+        {
+            auto root= new TreeNode(inorder[i]);
+            return root;
+        }
+        if(i>j) //not possible so return NULL
+            return NULL;
+        int pos=mp[preorder[pstart]]; //find pos of root in in-order traversal
+        auto root = new TreeNode(inorder[pos]);
+        int lpstart=pstart+1;       //this is starting of left subtree in post-order traversal
+        int lpend=pstart+(pos-i);   //this is ending of left subtree in post order traversal.(pos-i) elements are present in left sub tree
+        int rpstart=pstart+(pos-i)+1;//this is startng of right subtree in post-order traversal
+        int rpend=pend;               //end of right sub-tree in post-order traversal
+        root->left=help(preorder,inorder,lpstart,lpend,i,pos-1);
+        root->right=help(preorder,inorder,rpstart,rpend,pos+1,j);
+        return root;
+    }
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) 
+    {
+        mp.clear();
+        int n=preorder.size();
+        for(int i=0;i<n;i++)
+            mp[inorder[i]]=i; //storing indicies of nodes in in-order traversal.
+        return help(preorder,inorder,0,n-1,0,n-1);
+    }
+};
+// 8ms
