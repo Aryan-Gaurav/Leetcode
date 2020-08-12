@@ -1,0 +1,71 @@
+Problem Link:
+https://leetcode.com/problems/balanced-binary-tree/
+https://www.interviewbit.com/problems/balanced-binary-tree/
+
+Description:
+Given a binary tree, determine if it is height-balanced.
+
+For this problem, a height-balanced binary tree is defined as:
+
+a binary tree in which the left and right subtrees of every node differ in height by no more than 1.
+
+ 
+
+Example 1:
+
+Given the following tree [3,9,20,null,null,15,7]:
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+Return true.
+
+Code:
+Solution 1:
+O(N^2) time
+There is a help function which calculates the depth of the sub-tree.Idea is to check from top-down if difference in heights is atmost 1 and left sub-tree and 
+right sub-tree is balanced.But help function is called for each node and this algorithm takes O(N^2) complexity.
+
+int help(TreeNode* root)
+ {
+    if(root==NULL)
+    return 0;
+    return 1+max(help(root->left),help(root->right));
+ }
+ bool checker(TreeNode *root)
+ {
+     if(root==NULL)
+     return 1;
+     if(abs(help(root->left)-help(root->right))>1)
+     return 0;
+     return checker(root->left) and checker(root->right);
+ }
+int Solution::isBalanced(TreeNode* root) 
+{
+    return checker(root);
+}
+
+Solution 2:O(N) time
+Idea is to go from bottom-up.Calculate the height of left subtree and right tree and see if their height diff is atmost 1,else return -1.
+
+class Solution {
+public:
+    int dfs(TreeNode *root)
+    {
+        if(root==NULL)
+            return 0;
+        int l=dfs(root->left),r=dfs(root->right);
+        if(l==-1 or r==-1)
+            return -1;
+        if(abs(l-r)>1)
+            return -1;
+        return 1+max(l,r);
+    }
+    bool isBalanced(TreeNode* root) 
+    {
+        int ans=dfs(root);
+        return ans!=-1;
+    }
+};
