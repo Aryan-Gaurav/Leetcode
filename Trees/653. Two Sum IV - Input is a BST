@@ -1,0 +1,84 @@
+Problem Link:
+https://leetcode.com/problems/two-sum-iv-input-is-a-bst/
+
+Description:
+Given a Binary Search Tree and a target number, return true if there exist two elements in the BST such that their sum is equal to the given target.
+
+Example 1:
+
+Input: 
+    5
+   / \
+  3   6
+ / \   \
+2   4   7
+
+Target = 9
+
+Output: True
+
+Code:
+Solution 1:
+O(N) time and O(N) space
+Idea is to do an in-order traversal and push it in vector then use two pointers as in 2 Sum.
+
+class Solution {
+public:vector<int> v;
+    void help(TreeNode* root)
+    {
+        if(!root)
+            return;
+        help(root->left);
+        v.push_back(root->val);
+        help(root->right);
+    }
+    bool findTarget(TreeNode* root, int k) {
+        help(root);
+        int i=0,j=v.size()-1;
+        while(i<j)
+        {
+            if(v[i]+v[j]==k)
+                return 1;
+            else if(v[i]+v[j]<k)
+                i++;
+            else j--;
+        }
+        return 0;
+    }
+};
+
+Solution 2:
+O(N) time and O(N) space.
+Idea is to use a hashmap and before pushing a value check if target-value is already present.
+
+Solution 3:
+O(N lg N) time and O(1) space (if recursion stack is not considered)
+
+bool check(TreeNode *l,TreeNode *node,int tar)
+ {
+     if(l==NULL)
+        return 0;
+    if(l->val==tar)
+    {
+        if(l!=node) // donot count same node twice 
+            return 1;
+        else return 0;
+    }
+    if(l->val > tar)
+        return check(l->left,node,tar);
+    if(l->val < tar)
+        return check(l->right,node,tar);
+    return 0;
+ }
+ bool help(TreeNode *root,TreeNode *node,int tar)
+ {
+     if(node==NULL or root==NULL)
+        return 0;
+    if(check(root,node,tar-node->val))  //if another node coressponding to difference is found then return true
+        return 1;
+    return help(root,node->left,tar) or help(root,node->right,tar); //check for left and right child
+ }
+int Solution::t2Sum(TreeNode* root, int tar) 
+{
+    return help(root,root,tar);
+}
