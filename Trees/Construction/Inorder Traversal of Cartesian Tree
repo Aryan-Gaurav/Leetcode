@@ -1,0 +1,49 @@
+Problem Link:
+https://www.interviewbit.com/problems/inorder-traversal-of-cartesian-tree/
+
+Description:
+Given an inorder traversal of a cartesian tree, construct the tree.
+
+ Cartesian tree : is a heap ordered binary tree, where the root is greater than all the elements in the subtree. 
+ Note: You may assume that duplicates do not exist in the tree. 
+Example :
+
+Input : [1 2 3]
+
+Return :   
+          3
+         /
+        2
+       /
+      1
+      
+Code:
+Solution 1:
+Idea is to find the maximum in the array and the left pat of remainig array goes to left subtree and the right part of array goes to right subtree.Then recurse
+for the two part of array.
+
+TreeNode* help(vector<int> &v,int i,int j)
+ {
+     if(i==j)
+     {
+        TreeNode *root=new TreeNode(v[i]);
+        return root;
+     }
+     if(i>j)
+        return NULL;
+     int pos=-1,elem=INT_MIN;
+     for(int k=i;k<=j;k++)
+     {
+         if(elem<v[k])
+            elem=v[k],pos=k;
+     }
+     auto root = new TreeNode(v[pos]);
+     root->left=help(v,i,pos-1);
+     root->right=help(v,pos+1,j);
+     return root;
+ }
+TreeNode* Solution::buildTree(vector<int> &v) 
+{
+    int n=v.size();
+    return help(v,0,n-1);
+}
