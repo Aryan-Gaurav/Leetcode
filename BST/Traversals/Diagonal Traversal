@@ -57,9 +57,10 @@ vector<int> Solution::solve(TreeNode* root)
 Solution 2:
 Iterative using queue.
 Idea is to use a delimiter(NULL) to mark the starting and end of a diagonal.When we encounter a node, we explore its right node and push the left node
-(for next diagonal, it must be NOT NULL) in queue.As soon as the element is popped and front of queue is NULL we know that the current diagonal has ended and the
-nodes for generating next diagonal is in the queue we just push NULL in back to mark end of the incoming diagonal.We also increase the counter of diagonal number.
-For generating the 1st diagonal, we need only root so push root then NULL.
+(for next diagonal, it must be NOT NULL) in queue.As soon as the element is popped and front of queue is NULL we know that the current diagonal has ended
+and the nodes for generating next diagonal is in the queue we just push NULL in back to mark end of the incoming diagonal.We also increase the counter 
+of diagonal number.For generating the 1st diagonal, we need only root so push root then NULL.
+
 vector<int> Solution::solve(TreeNode* root) 
 {
     map<int , vector<int>> mp;
