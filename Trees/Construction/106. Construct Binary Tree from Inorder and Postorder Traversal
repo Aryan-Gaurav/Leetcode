@@ -1,0 +1,59 @@
+Problem Link:
+https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
+
+Description:
+
+Given inorder and postorder traversal of a tree, construct the binary tree.
+
+Note:
+You may assume that duplicates do not exist in the tree.
+
+For example, given
+
+inorder = [9,3,15,20,7]
+postorder = [9,15,7,20,3]
+Return the following binary tree:
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+ 
+ Code:
+ Solution 1:
+ For detailed explanation and brute force approach see its counter-part.
+ We try to contruct tree from inorder traversal.For finding the root we see last element of post-order traversal and find its pos in in-order traversal(using
+ pre-computed map).We adjust the range of post-order traversal for left sub-tree and right sub-tree according to elements present in left side of root in in-order
+ traversal and right side in in-order traversal.
+ 
+ class Solution {
+public:
+    unordered_map<int,int> mp;
+    TreeNode* help(vector<int> &inorder,vector<int> &postorder,int pstart,int pend,int i,int j)
+    {
+        if(i==j)
+        {
+            auto root = new TreeNode(inorder[i]);
+            return root;
+        }
+        if(i>j)
+            return NULL;
+        int pos=mp[postorder[pend]];  //finding pos in in-order traversal
+        int lpstart,lpend,rpstart,rpend;
+        lpstart=pstart,lpend=pstart+(pos-i)-1;  //adjust the left subtree start and end (-1 is because pos-i elements are present in left subtree strating from pstart)
+        rpstart=pstart+(pos-i),rpend=pend-1;  //adjust the start and end of right sub-tree
+        auto root= new TreeNode(inorder[pos]);
+        root->left= help(inorder,postorder,lpstart,lpend,i,pos-1);
+        root->right= help(inorder,postorder,rpstart,rpend,pos+1,j);
+        return root;
+    }
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) 
+    {
+        mp.clear();
+        int n=inorder.size();
+        for(int i=0;i<n;i++)
+            mp[inorder[i]]=i;
+        return help(inorder,postorder,0,n-1,0,n-1);
+    }
+};
