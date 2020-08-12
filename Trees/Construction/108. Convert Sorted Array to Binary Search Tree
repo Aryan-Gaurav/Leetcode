@@ -1,0 +1,51 @@
+Problem Link:
+https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/
+
+Description:
+
+Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
+
+For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two subtrees of every node never differ by more than 1.
+
+Example:
+
+Given the sorted array: [-10,-3,0,5,9],
+
+One possible answer is: [0,-3,9,-10,null,5], which represents the following height balanced BST:
+
+      0
+     / \
+   -3   9
+   /   /
+ -10  5
+ 
+Code:
+Solution 1:
+
+We divide the array into two parts i.e. left subtree and right subtree and the mid element. BST have a unique property of that all the elements in right sub-tree
+are greater than the node and all elements in left subtree are smaller than the node.Using this property in mind we try to use the mid element as the root and
+left part as left sub-tree and right as right sub-tree.When the length of array is even then one of the trees have one more element than other which can cause
+maximum height difference of 1. 
+
+class Solution {
+public:
+    TreeNode* helper(vector<int>&v,int i,int j)
+    {
+        if(i==j)
+        {
+            auto root= new TreeNode(v[i]);
+            return root;
+        }
+        if(i>j) return NULL;
+        int mid=(i+j)/2;
+        auto root=new TreeNode(v[mid]);
+        root->left=helper(v,i,mid-1);
+        root->right=helper(v,mid+1,j);
+        return root;
+    }
+    TreeNode* sortedArrayToBST(vector<int> &v) 
+    {
+        int n = v.size();
+        return helper(v,0,n-1);
+    }
+};
