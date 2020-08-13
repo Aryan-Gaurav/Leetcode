@@ -1,0 +1,83 @@
+Problem Link:
+https://leetcode.com/problems/subsets/
+
+Description:
+Given a set of distinct integers, nums, return all possible subsets (the power set).
+
+Note: The solution set must not contain duplicate subsets.
+
+Example:
+
+Input: nums = [1,2,3]
+Output:
+[
+  [3],
+  [1],
+  [2],
+  [1,2,3],
+  [1,3],
+  [2,3],
+  [1,2],
+  []
+]
+
+Code:
+Solution 1:
+Total number of subsets of n elments are 2^n so iterating from 0 to 2^n-1 and checking every bit of a number and put the corresponding element into subset if bit
+is set and discarding if bit is 0.
+In general if you can use bit manipulation prefer it over backtracking becuase it is easy to implement and always gives answer in increasing order(lexicographic).
+
+Your input
+[1,2,3]
+Output
+[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
+
+class Solution {
+public:
+    vector<vector<int>> subsets(vector<int>& v) 
+    {
+        int n=v.size();
+        vector<vector<int>> ans;
+        for(int i=0;i<(1<<n);i++)
+        {
+            vector<int> temp;
+            for(int j=0;j<n;j++)
+                if((i>>j)&1)
+                    temp.push_back(v[j]);
+            ans.push_back(temp);
+        }
+        return ans;
+    }
+};
+
+Solution 2:
+Using Backtracking we recurse for every combination.First push ith element ans then recurse for next indicies,and after recursion goes off, pop the element
+
+Your input
+[1,2,3]
+Output
+[[],[1],[1,2],[1,2,3],[1,3],[2],[2,3],[3]]
+
+class Solution {
+public:
+    vector<vector<int>> ans;
+    vector<int> temp;
+    void helper(vector<int> &v,int start)
+    {
+        int n=v.size();
+        ans.push_back(temp);
+       for(int i=start;i<n;i++)
+       {
+           temp.push_back(v[i]);
+           helper(v,i+1);
+           temp.pop_back();
+       }
+    }
+    vector<vector<int>> subsets(vector<int>& v) 
+    {
+        ans.clear();
+        temp.clear();
+        helper(v,0);
+        return ans;
+    }
+};
