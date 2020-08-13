@@ -1,0 +1,55 @@
+Problem Link:
+https://leetcode.com/problems/combination-sum-ii/
+
+Description:
+Given a collection of candidate numbers (candidates) and a target number (target), find all unique combinations in candidates
+where the candidate numbers sums to target.
+
+Each number in candidates may only be used once in the combination.
+
+Note:
+
+All numbers (including target) will be positive integers.
+The solution set must not contain duplicate combinations.
+Example 1:
+
+Input: candidates = [10,1,2,7,6,1,5], target = 8,
+A solution set is:
+[
+  [1, 7],
+  [1, 2, 5],
+  [2, 6],
+  [1, 1, 6]
+]
+
+Code:
+Solution 1:
+Since you can't use same elements twice so you recurse from i+1(rather than i).And since we want to avoid duplicates in solution set we sort the array and then
+ignore the following elements of same values(as in Subsets II) which are after curr index.
+
+class Solution {
+public:
+    vector<vector<int>> ans;
+    vector<int> temp;
+    void backtrack(vector<int> &v,int idx,int currsum,int tar)
+    {
+        if(currsum > tar)
+            return;
+        if(currsum == tar)
+            ans.push_back(temp);
+        for(int i=idx;i<v.size();i++)
+        {
+            if(i>idx and v[i]==v[i-1])  //this is to avoid duplicates
+                continue;
+            temp.push_back(v[i]);
+            backtrack(v,i+1,currsum+v[i],tar);  //i+1 because no repetition of numbers is allowed i.e. you can choose any no. one time only
+            temp.pop_back();
+        }
+    }
+    vector<vector<int>> combinationSum2(vector<int> &v, int tar) 
+    {
+        sort(v.begin(),v.end());
+        backtrack(v,0,0,tar);
+        return ans;
+    }
+};
