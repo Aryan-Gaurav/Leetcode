@@ -1,0 +1,64 @@
+Problem Link:
+https://leetcode.com/problems/invert-binary-tree/
+https://www.interviewbit.com/problems/invert-the-binary-tree/
+
+Description:
+Invert a binary tree.
+
+Example:
+
+Input:
+
+     4
+   /   \
+  2     7
+ / \   / \
+1   3 6   9
+Output:
+
+     4
+   /   \
+  7     2
+ / \   / \
+9   6 3   1
+
+Code:
+Solution 1:
+Recusive Solution.
+Just invert the left subtree and right subtree and then swap the two sub-trees.
+
+TreeNode* Solution::invertTree(TreeNode* root) 
+{
+    if(root==NULL)
+    return root;
+    invertTree(root->left);
+    invertTree(root->right);
+    swap(root->left,root->right);
+    return root;
+}
+
+Solution 2:
+Using queue.You can do this similarly using stack.
+
+class Solution {
+public:
+    TreeNode* invertTree(TreeNode* root) 
+    {
+        if(!root)
+            return NULL;
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty())
+        {
+            auto t=q.front();
+            q.pop();
+            if(t->left)
+                q.push(t->left);
+            if(t->right)
+                q.push(t->right);
+            swap(t->left,t->right);
+        }
+        return root;
+        
+    }
+};
