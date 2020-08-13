@@ -1,0 +1,93 @@
+Problem Link:
+https://leetcode.com/problems/permutations-ii/
+
+Description:
+Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+
+Example:
+
+Input: [1,1,2]
+Output:
+[
+  [1,1,2],
+  [1,2,1],
+  [2,1,1]
+]
+
+Code:
+Solution 1:
+First sort the array and then the problem is caused by repeated elements.To avoid duplicate permutations we use the first duplicate character from left i.e.
+we donot use a repetated element(let's use 1 in this e.g.) in a permutation until its all its left duplicates are used.This ensures that whatever be the 
+permutation repeated elements are used always from left to right.So no element(1) from middle can mark the 1st use of 1.If you want to use 1 then take from left.
+So no duplicates in permutation.
+class Solution {
+public:
+    vector<vector<int>> ans;
+    vector<int> temp;
+    void backtrack(vector<int> &v,vector<bool> &vis)
+    {
+        if(temp.size()==v.size())
+        {
+            ans.push_back(temp);
+            return;
+        }
+        for(int i=0;i<v.size();i++)
+        {
+            if(i>0 and v[i]==v[i-1] and !vis[i-1])
+                continue;
+            if(!vis[i])
+            {
+                vis[i]=1;
+                temp.push_back(v[i]);
+                backtrack(v,vis);
+                temp.pop_back();
+                vis[i]=0;
+            }
+        }
+    }
+    vector<vector<int>> permuteUnique(vector<int> &v) 
+    {
+        int n=v.size();
+        sort(v.begin(),v.end());
+        vector<bool> vis(n,0);
+        backtrack(v,vis);
+        return ans;
+    }
+};
+
+Solution 2:
+Same concept but applied in a bit different way.We use a map to store the elements and their frequency.We donot go in the loop if the count of element is zero.
+Here the duplicates are handled in more efficient way i.e. during exploring it is use only once at a time.
+class Solution {
+public:
+    vector<vector<int>> ans;
+    vector<int> temp;
+    int n;
+    void backtrack(map<int,int> &mp)
+    {
+        if(temp.size()==n)
+        {
+            ans.push_back(temp);
+            return;
+        }
+        for(auto itr=mp.begin();itr!=mp.end();itr++)
+        {
+            if(itr->second<=0)  //the element is not present 
+                continue;
+            itr->second--;    //the element is use once.
+            temp.push_back(itr->first);
+            backtrack(mp);
+            temp.pop_back();
+            itr->second++;
+        }
+    }
+    vector<vector<int>> permuteUnique(vector<int> &v) 
+    {
+        n=v.size();
+        map<int,int> mp;
+        for(auto x:v)
+            mp[x]++;
+        backtrack(mp);
+        return ans;
+    }
+};
