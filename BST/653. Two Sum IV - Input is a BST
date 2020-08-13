@@ -82,3 +82,7 @@ int Solution::t2Sum(TreeNode* root, int tar)
 {
     return help(root,root,tar);
 }
+
+Solution 4:
+O(N) time and O(h) space
+Idea is to use BST iterator
