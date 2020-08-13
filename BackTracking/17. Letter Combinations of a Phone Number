@@ -1,0 +1,48 @@
+Problem Link:
+https://leetcode.com/problems/letter-combinations-of-a-phone-number/
+
+Description:
+Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.
+
+A mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.
+
+Example:
+
+Input: "23"
+Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+Note:
+
+Although the above answer is in lexicographical order, your answer could be in any order you want.
+
+Code:
+Solution 1:
+We iterate the string one by one and add characters corresponding to each position.
+class Solution {
+public:
+    vector<string> ans;
+    string temp;
+    vector<string> mp={"","","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
+    void backtrack(string &s,int idx)
+    {
+        if(temp.size()==s.size())
+        {
+            if(s.size())
+            ans.push_back(temp);
+            return;
+        }
+        for(int i=idx;i<s.size();i++)
+        {
+            for(auto x:mp[s[i]-'0'])
+            {
+                temp.push_back(x);
+                backtrack(s,i+1);
+                temp.pop_back();
+            }
+        }
+    }
+    vector<string> letterCombinations(string s) 
+    {
+        backtrack(s,0);
+        return ans;
+    }
+};
