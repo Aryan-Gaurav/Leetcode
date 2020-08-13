@@ -1,0 +1,100 @@
+Problem Link:
+https://leetcode.com/problems/path-sum-iii/
+
+Description:
+
+You are given a binary tree in which each node contains an integer value.
+
+Find the number of paths that sum to a given value.
+
+The path does not need to start or end at the root or a leaf, but it must go downwards (traveling only from parent nodes to child nodes).
+
+The tree has no more than 1,000 nodes and the values are in the range -1,000,000 to 1,000,000.
+
+Example:
+
+root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
+
+      10
+     /  \
+    5   -3
+   / \    \
+  3   2   11
+ / \   \
+3  -2   1
+
+Return 3. The paths that sum to 8 are:
+
+1.  5 -> 3
+2.  5 -> 2 -> 1
+3. -3 -> 11
+
+Code:
+Solution 1:
+O(N^2) time
+Idea is to use each node as starting node and then check how many paths exist to make the target.
+
+class Solution {
+public:
+    int ans=0;
+    int check(TreeNode* start,int tar)
+    {
+        if(start==NULL)
+            return 0;
+        if(tar==start->val) //it means one of the paths terminates here and other may go on.
+            return 1+check(start->left,tar-start->val)+check(start->right,tar-start->val);
+        return check(start->left,tar-start->val)+check(start->right,tar-start->val);//not path terminates at this node so check in left and right sub-tree
+    }
+    void dfs(TreeNode* start,int tar)
+    {
+        if(start==NULL)
+            return ;
+       if(check(start,tar))
+       {
+           ans+=check(start,tar);
+       }
+        dfs(start->left,tar);
+        dfs(start->right,tar);
+        
+    }
+    int pathSum(TreeNode* root, int sum) 
+    {
+        ans=0;
+       dfs(root,sum);
+        return ans;
+    }
+};
+
+Solution 2:
+O(N) time O(N) space
+We use hashing concept used in 2 Sum.We store the sum from root until current node in variable named currsum and its count in a map and then check if currsum 
+is equal to target, if yes then increment the answer.Else we can check if currsum is greater than target and the extra diffrence (currsum-target) is already
+present or not and if present then we can add its frequency to the answer.Before going to left and right subtree increment of count of currsum and after exploring
+the two subtrees decrement the counter of currsum so that it does not get counted in the pathe which is not connected to current node.
+
+class Solution {
+private:
+    int ans=0;
+    unordered_map<int,int> count;
+public:
+    void dfs(TreeNode* root,int currsum,int tar)
+    {
+        if(root==NULL)
+         return;
+        currsum+=root->val;
+        if(tar==currsum)
+            ans++;
+        if(count.find(currsum-tar)!=count.end())
+            ans+=count[currsum-tar];
+        count[currsum]++;
+        dfs(root->left,currsum,tar);
+        dfs(root->right,currsum,tar);
+        count[currsum]--;
+    }
+    int pathSum(TreeNode* root, int sum) 
+    {
+        ans=0;
+       dfs(root,0,sum);
+        return ans;
+    }
+};
