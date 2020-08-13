@@ -1,0 +1,56 @@
+Problem Link:
+https://leetcode.com/problems/generate-parentheses/
+
+Description:
+Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+For example, given n = 3, a solution set is:
+
+[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+]
+
+Code:
+Solution 1:
+O(N * 2^(2*N)) time complexity and O(N) space.
+Remember I said to use bit manipulation over backtracking if possible.Here i generate all 2*n length parantheses and check which is valid and which is not.
+
+class Solution {
+public:
+    bool isok(string &s)
+    {
+        int count=0;
+        for(auto x:s)
+        {
+            if(x=='(')  //treat it as increse in no. of expressions
+                count++;
+            else count--; //else decrease
+            if(count<0) //remember AGL sir taught that at any point in a parantheses no. of opening brackets is always more than closing ones
+                return 0;
+        }
+        return count==0;
+    }
+    vector<string> generateParenthesis(int n) 
+    {
+        vector<string> ans;
+        for(int i=0;i<(1<<(2*n));i++)
+        {
+            string temp="";
+            for(int j=0;j<2*n;j++)
+            {
+                if((i>>j)&1)
+                    temp+='(';
+                else temp+=')';
+            }
+            if(isok(temp))
+                ans.push_back(temp);
+        }
+        return ans;
+    }
+};
+
+Solution 2:
