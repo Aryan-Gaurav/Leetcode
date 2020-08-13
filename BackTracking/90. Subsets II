@@ -1,0 +1,56 @@
+Problem Link:
+https://leetcode.com/problems/subsets-ii/
+
+Description:
+
+Given a collection of integers that might contain duplicates, nums, return all possible subsets (the power set).
+
+Note: The solution set must not contain duplicate subsets.
+
+Example:
+Your input
+[1,2,2,3]
+Output
+[
+[],
+[1],
+[1,2],
+[1,2,2],
+[1,2,2,3],
+[1,2,3],
+[1,3],
+[2],
+[2,2],
+[2,2,3],
+[2,3],
+[3]
+]
+
+Code:
+Solution 1:
+Here only one more condition is added that when duplicates are encountered after starting index then ignore them completely becuase its all combinations have been
+already generated.
+
+class Solution {
+public:
+    vector<vector<int>> ans;
+    vector<int> temp;
+    void help(vector<int> &v,int idx)
+    {
+        ans.push_back(temp);
+        for(int i=idx;i<v.size();i++)
+        {
+            if(i>idx and v[i]==v[i-1])  //if the current element is equal to previous and its after starting index
+                continue;
+            temp.push_back(v[i]);
+            help(v,i+1);
+            temp.pop_back();
+        }
+    }
+    vector<vector<int>> subsetsWithDup(vector<int> &v) 
+    {
+        sort(v.begin(),v.end());
+        help(v,0);
+        return ans;
+    }
+};
