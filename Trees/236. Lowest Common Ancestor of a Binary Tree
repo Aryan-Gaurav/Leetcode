@@ -1,0 +1,74 @@
+Problem Link:
+https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/
+https://www.interviewbit.com/problems/least-common-ancestor/
+
+Description:
+Find the lowest common ancestor in an unordered binary tree given two values in the tree.
+
+ Lowest common ancestor : the lowest common ancestor (LCA) of two nodes v and w in a tree or directed acyclic graph (DAG) is the lowest (i.e. deepest) node 
+ that has both v and w as descendants. 
+Example :
+
+
+        _______3______
+       /              \
+    ___5__          ___1__
+   /      \        /      \
+   6      _2_     0        8
+         /   \
+         7    4
+For the above tree, the LCA of nodes 5 and 1 is 3.
+
+ LCA = Lowest common ancestor 
+Please note that LCA for nodes 5 and 4 is 5.
+
+1.You are given 2 values. Find the lowest common ancestor of the two nodes represented by val1 and val2
+2.No guarantee that val1 and val2 exist in the tree. If one value doesn’t exist in the tree then return -1.
+3.There are no duplicate values.
+You can use extra memory, helper functions, and can modify the node struct but, you can’t add a parent pointer.
+
+Code:
+Solution 1:
+Brute Force.Check every node if one of the node is in left subtree and anptther in right subtree then its ans.
+O(N^2)
+
+Solution 2:
+Using one traversal and constant space.Idea is to check whether each of the values is present in the tree(It can alse be done using two bool in same function
+helper)in bottom-up fashion.Then the helper function will return the Node of the element if it is present.If at any node we find pointer from both left and 
+right subtree then its answer and return this node.else if any one of them is zero then return the left or right one which is not NULL.
+bool find(TreeNode* root,int x)
+{
+    if(root==NULL)
+    return 0;
+    if(root->val==x)
+    return 1;
+    return find(root->left,x) or find(root->right,x);
+}
+int helper(TreeNode* root,int a ,int b)
+{
+    if(root==NULL)
+    return 0;
+    if(root->val==a or root->val==b)
+    return root->val;
+    int l=helper(root->left,a,b);
+    int r=helper(root->right,a,b);
+    if(l!=0 and r!=0)
+    return root->val;
+    if(l==0)
+    return r;
+    else return l;
+}
+int Solution::lca(TreeNode* root, int a, int b) 
+{
+    if(! (find(root,a) and find(root,b)))
+    return -1;
+    return helper(root,a,b);
+}
+
+Solution 3:
+Generate path from nodes to root by running a dfs and then compare the list and the 1st common element you get is the lcs.
+O(N) time and O(N) space.
+
+Solution 4:
+Using binary lifting when we have to seach for LCA queries.
+log(H) per queries and O(N) time for preprocessing O(N lg H) space
