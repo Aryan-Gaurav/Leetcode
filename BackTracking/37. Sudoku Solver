@@ -1,0 +1,145 @@
+Problem Link:
+https://leetcode.com/problems/sudoku-solver/
+
+Description:
+Write a program to solve a Sudoku puzzle by filling the empty cells.
+
+A sudoku solution must satisfy all of the following rules:
+
+Each of the digits 1-9 must occur exactly once in each row.
+Each of the digits 1-9 must occur exactly once in each column.
+Each of the the digits 1-9 must occur exactly once in each of the 9 3x3 sub-boxes of the grid.
+Empty cells are indicated by the character '.'.
+
+Note:
+
+The given board contain only digits 1-9 and the character '.'.
+You may assume that the given Sudoku puzzle will have a single unique solution.
+The given board size is always 9x9
+
+Code:
+Solution 1:
+We first count number of given element as count.If count is 81 then you are done.Now we make a backtrack function for trying out all possibilities in empty cell
+and after trying it returns because if you have tried all possibilites in 1st empty cell then if you had to find the solution you would have found it,otherwise
+you can't solve it.One row,one column and one square can contain contain a number once.For this purpose we keep a map of bool value type(1st elememt in pair is 
+number and 2nd is row or column or square number).
+
+class Solution {
+public:
+    vector<vector<vector<char>>> ans;
+vector<vector<char>> temp;
+map<pair<int,int>,bool> row,col,square;
+void backtrack(int count)
+{
+    if(count==81)
+    {
+        ans.push_back(temp);
+        return;
+    }
+    for(int i=0;i<9;i++)
+    {
+        for(int j=0;j<9;j++)
+        {
+            if(temp[i][j]!='.')
+                continue;
+            for(int val=1;val<=9;val++)
+            {
+                int x=3*(i/3)+j/3;  //this is to calculate square number
+                if(!row[{i,val}] and !col[{j,val}] and !square[{x,val}])
+                {
+                    row[{i,val}]=col[{j,val}]=square[{x,val}]=1;
+                    temp[i][j]=val+'0';
+                    backtrack(count+1);
+                    temp[i][j]='.';
+                    row[{i,val}]=col[{j,val}]=square[{x,val}]=0;
+                }
+            }
+            return;     //you have tried all possibilities now go back,if it would be possible you have found it
+        }
+    }
+}
+void solveSudoku(vector<vector<char>>& board) 
+{
+    temp=board;
+    int count=0;
+    for(int i=0;i<9;i++)
+    {
+        for(int j=0;j<9;j++)
+        {
+            if(board[i][j]=='.')
+                continue;
+            int val=board[i][j]-'0';
+            int x=(i/3)*3+j/3;          //this is to calculate square number
+            row[{i,val}]=col[{j,val}]=square[{x,val}]=1;
+            count++;
+        }
+    }
+    
+    backtrack(count);
+    board=ans[0];
+}
+};
+
+Solution 2:
+Same as above but instead of maps just use normal bool array.
+
+class Solution {
+public:
+vector<vector<vector<char>>> ans;
+vector<vector<char>> temp;
+bool row[9][9],col[9][9],square[9][9];
+void backtrack(int count)
+{
+    if(count==81)
+    {
+        ans.push_back(temp);
+        return;
+    }
+    for(int i=0;i<9;i++)
+    {
+        for(int j=0;j<9;j++)
+        {
+            if(temp[i][j]!='.')
+                continue;
+            for(int val=0;val<9;val++)
+            {
+                int x=3*(i/3)+j/3;
+                if(!row[i][val] and !col[j][val] and !square[x][val])
+                {
+                    row[i][val]=col[j][val]=square[x][val]=1;
+                    temp[i][j]=val+'1';
+                    backtrack(count+1);
+                    temp[i][j]='.';
+                    row[i][val]=col[j][val]=square[x][val]=0;
+                }
+            }
+            return;
+        }
+    }
+}
+void solveSudoku(vector<vector<char>>& board) 
+{
+    temp=board;
+    int count=0;
+    memset(row,0,sizeof(row));
+    memset(row,0,sizeof(row));
+    memset(square,0,sizeof(square));
+    for(int i=0;i<9;i++)
+    {
+        for(int j=0;j<9;j++)
+        {
+            if(board[i][j]=='.')
+                continue;
+            int val=board[i][j]-'1';
+            int x=(i/3)*3+j/3;
+            row[i][val]=1;
+            col[j][val]=1;
+            square[x][val]=1;
+            count++;
+        }
+    }
+    
+    backtrack(count);
+   board=ans[0];
+}
+};
