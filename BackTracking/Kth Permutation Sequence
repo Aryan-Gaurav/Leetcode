@@ -1,0 +1,66 @@
+Problem Link:
+https://www.interviewbit.com/problems/kth-permutation-sequence/
+
+Description:
+The set [1,2,3,…,n] contains a total of n! unique permutations.
+
+By listing and labeling all of the permutations in order,
+We get the following sequence (ie, for n = 3 ) :
+
+1. "123"
+2. "132"
+3. "213"
+4. "231"
+5. "312"
+6. "321"
+Given n and k, return the kth permutation sequence.
+
+For example, given n = 3, k = 4, ans = "231"
+
+ Good questions to ask the interviewer :
+What if n is greater than 10. How should multiple digit numbers be represented in string?
+ In this case, just concatenate the number to the answer.
+so if n = 11, k = 1, ans = "1234567891011" 
+Whats the maximum value of n and k?
+ In this case, k will be a positive integer thats less than INT_MAX.
+n is reasonable enough to make sure the answer does not bloat up a lot.
+
+Code:
+Solution 1:
+Brute Force approach would be to backtrack and generate all the permuttaions till count reaches k.It leads to MLE as k grows to be near about n!.
+We donot need to generate all possible permutations till K but rather use some combinatorics.
+If we fix the 1st element then we will have (n-1)! permutations and for 1st place we have n options ie we can say that we have n groups of (n-1)!.
+Now we check for our K in which group will it fall, it will be idx=k/(n-1)! so take element at idx position in sorted array.In this group it will be at k%(n-1)!
+position.After fixing 1st element,pop it from array.Now we have same problem with new K (k%(n-1)!) and new n ie (n-1).
+Before all this stuff begins,decrement k as we already have the 1st permutation.When n>=13 factorial is too large to store in int so we take it as INT_MAX.
+So k remains unchanged and we take smallest element.
+string Solution::getPermutation(int n, int k) 
+{
+  int fact[13];
+  fact[0]=1;
+  for(int i=1;i<13;i++)
+    fact[i]=i*fact[i-1];
+    string ans="";
+    vector<string> v;
+    for(int i=1;i<=n;i++)
+    v.push_back(to_string(i));
+    k--;    //because we already have 1,....n
+    n--;
+    while(n>=0)
+    {
+        if(n>=13)
+        {
+            ans+=v[0];
+            v.erase(v.begin());
+        }
+        else
+        {
+            int idx=k/fact[n];
+            ans+=v[idx];
+            v.erase(v.begin()+idx);
+            k=k%fact[n];
+        }
+        n--;
+    }
+    return ans;
+}
