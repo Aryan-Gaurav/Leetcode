@@ -1,0 +1,72 @@
+Problem Link:
+https://leetcode.com/problems/n-queens/
+
+Description:
+The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+
+
+
+Given an integer n, return all distinct solutions to the n-queens puzzle.
+
+Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space respectively.
+
+Example:
+
+Input: 4
+Output: [
+ [".Q..",  // Solution 1
+  "...Q",
+  "Q...",
+  "..Q."],
+
+ ["..Q.",  // Solution 2
+  "Q...",
+  "...Q",
+  ".Q.."]
+]
+Explanation: There exist two distinct solutions to the 4-queens puzzle as shown above.
+
+Code:
+Solution 1:
+O(2^(N*N)) time and O(N) space
+We start from lowest row and try to put queen in each column of that row.Now we move on to next row and try to put queens in such a position such that pre-existing
+queens donot attack it.If in such way we reach the end row then we found a solution and push it in ans.
+We use unordered_map for marking each visited row,column and two diagonals.The primary diagonal has property of sum of row and column is constant for a 
+particular diagonal and for secondary diagonal has property that row-column is constant for every cell in it.
+
+class Solution {
+public:
+vector<vector<string>> ans;
+vector<string> temp;
+unordered_map<int,bool> col,pdiag,sdiag;
+void backtrack(int r)
+{
+    int n=temp.size();
+    if(r==n)
+    {
+        ans.push_back(temp);
+        return;
+    }
+    for(int j=0;j<n;j++)
+    {
+        if(!col[j] and !pdiag[r+j] and !sdiag[r-j]) //no need to check row as we are incrementing it one by one
+        {
+            col[j]=pdiag[r+j]=sdiag[r-j]=1;
+            temp[r][j]='Q';
+            backtrack(r+1);
+            col[j]=pdiag[r+j]=sdiag[r-j]=0;
+            temp[r][j]='.';
+        }
+    }
+}
+vector<vector<string>> solveNQueens(int n) 
+{
+    string xx="";
+    for(int i=0;i<n;i++)
+        xx+='.';
+    for(int i=0;i<n;i++)
+        temp.push_back(xx);
+    backtrack(0);
+    return ans;
+}
+};
