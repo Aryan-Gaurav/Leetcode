@@ -54,3 +54,34 @@ public:
 };
 
 Solution 2:
+For any valid combination no. of openining brackets must be greater than equal to no. of closing brackets.We have two options either to insert one more '(' or ')'
+We proceed both ways.
+class Solution {
+public:
+    vector<string> ans;
+    string temp;
+    void backtrack(int open,int close,int n)
+    {
+        if(temp.size()==2*n)
+        {
+            if(open==n and close==n)
+                ans.push_back(temp);
+            return;
+        }
+        if(temp.size()>2*n)
+            return;
+        if(open>=close) //check condition for valid paratheses
+        {
+            temp.push_back('(');  //either add '('
+            backtrack(open+1,close,n);
+            temp.pop_back();
+            temp.push_back(')');  //or add ')'
+            backtrack(open,close+1,n);
+            temp.pop_back();
+        }
+    }
+    vector<string> generateParenthesis(int n) 
+    {
+        backtrack(0,0,n);
+        return ans;
+    }
