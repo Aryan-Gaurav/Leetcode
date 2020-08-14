@@ -1,0 +1,58 @@
+Problem Link:
+https://leetcode.com/problems/palindrome-partitioning/
+
+Description:
+Given a string s, partition s such that every substring of the partition is a palindrome.
+
+Return all possible palindrome partitioning of s.
+
+Example:
+
+Input: "aab"
+Output:
+[
+  ["aa","b"],
+  ["a","a","b"]
+]
+
+Code:
+Solution 1:
+Time is O(N* 2^N) which can be reduced to O(2^n) by preporcessing a dp table for palindrome checking.
+We first make function for checking if a subtring from i to j is palindrome or not.This takes O(N) time.
+We construct a backtrack function to generate all answers from idx to end .As soon as we reach to end we push the set of palindromes to answer. 
+class Solution {
+public:
+    vector<vector<string>> ans;
+    vector<string> temp;
+    bool ispalin(string &s,int i,int j)
+    {
+        int n=j-i+1;
+        for(int k=0;k<n/2;k++)
+            if(s[i+k]!=s[j-k])
+                return 0;
+        return 1;
+    }
+    void backtrack(string &s,int idx)
+    {
+        if(idx==s.size())
+        {
+            ans.push_back(temp);
+        }
+        
+        for(int i=idx;i<s.size();i++)
+        {
+            if(ispalin(s,idx,i))  //this means next palindrome ends at i
+            {
+                string xx=s.substr(idx,i-idx+1);
+                temp.push_back(xx);
+                backtrack(s,i+1);
+                temp.pop_back();
+            }
+        }
+    }
+    vector<vector<string>> partition(string s) 
+    {
+        backtrack(s,0);
+        return ans;
+    }
+};
