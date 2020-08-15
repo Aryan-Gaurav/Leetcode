@@ -1,0 +1,54 @@
+Problem Link:
+https://leetcode.com/problems/candy/
+
+Description:
+There are N children standing in a line. Each child is assigned a rating value.
+
+You are giving candies to these children subjected to the following requirements:
+
+Each child must have at least one candy.
+Children with a higher rating get more candies than their neighbors.
+What is the minimum candies you must give?
+
+Example 1:
+
+Input: [1,0,2]
+Output: 5
+Explanation: You can allocate to the first, second and third child with 2, 1, 2 candies respectively.
+Example 2:
+
+Input: [1,2,2]
+Output: 4
+Explanation: You can allocate to the first, second and third child with 1, 2, 1 candies respectively.
+             The third child gets 1 candy because it satisfies the above two conditions.
+
+Code:
+Solution 1:
+First give 1 candies to each student.Then scan from left to right and when the next element is greater than previous element then give him 1 more toffee.
+After updating the array then scan from right to left and when the next element is greater than previous element then give him  1more toffee and update the
+value as max of previous set value or new one.
+
+class Solution {
+public:
+    int candy(vector<int> &ratings) 
+    {
+        if(ratings.size()<=1)
+            return ratings.size();
+        int n=ratings.size();
+        vector<int> v(n,1);
+        for(int i=0;i<n-1;i++)
+        {
+            if(ratings[i]<ratings[i+1])
+                v[i+1]=1+v[i];
+        }
+        for(int i=n-1;i>0;i--)
+        {
+            if(ratings[i-1]>ratings[i])
+                v[i-1]=max(v[i-1],v[i]+1);
+        }
+        int sum=0;
+        for(auto x:v)
+            sum+=x;
+        return sum;
+    }
+};
