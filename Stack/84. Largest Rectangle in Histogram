@@ -1,0 +1,97 @@
+Problem Link:
+https://leetcode.com/problems/largest-rectangle-in-histogram/
+
+Description:
+
+Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram.
+
+Example:
+
+Input: [2,1,5,6,2,3]
+Output: 10
+
+Code:
+Solution 1:(For very details refer to https://www.youtube.com/watch?v=MhQPpAoZbMc )
+
+Brute force is O(n*n) and divide and conquer is (N lg N).We would use here a stack based solution which is O(N).
+For a given bar graph, we extend it in left and right direction until we hit a bar of less height on both sides.This is the limit of area which can be formed
+using a particular bar.
+Idea is to maintain a monotonic increasing stack so that height are always in increasing order.As soon as we hit a bar of less height than stk.top() it means we
+cannot extend the area more( we got the right end of the area ).Now we calculate the area by taking stk.top() and pop it, as main bar, for this we know its 
+left end point is the next top element and right end is already known.We calculate the area and update the answer.If the stack is empty that means it has no
+boundary to left so calculate its area in that way.This whole process goes on until stk.top() height is smaller or equal to current height.At last if stack is 
+not empty then pop its elements and update the answer.
+For calculating the area we use 2 formulas:
+
+When stack is empty,then area is v[top()]*i and when its not empty then (i-l-1)*v[top()] where l is new top element.
+
+class Solution {
+public:
+    int largestRectangleArea(vector<int>&v) 
+    {
+        int ans=0;
+        int i=0,n=v.size();
+        stack<int> stk;
+        while(i<n)
+        {
+            while(!stk.empty() and v[i]< v[stk.top()])
+            {
+                auto t=stk.top();
+                stk.pop();
+                if(stk.empty())
+                    ans=max(ans,i*(v[t]));
+                else ans=max(ans,(i-stk.top()-1)*v[t]);
+            }
+            stk.push(i);
+            i++;
+        }
+        while(!stk.empty())
+        {
+            auto t=stk.top();
+            stk.pop();
+            if(stk.empty())
+                ans=max(ans,v[t]*i);
+            else ans=max(ans,v[t]*(i-stk.top()-1));
+        }
+        return ans;
+    }
+};
+
+Solution 2:
+For a better understanding of the above process,we construct two arrays one of them stores index of next smaller element on left side and another one stores of 
+right side.And we update the answer for each bar.
+class Solution {
+public:
+    int largestRectangleArea(vector<int>&v) 
+    {
+        int ans=0;
+        int n=v.size();
+        stack<int> stk;
+        vector<int> nextsmallerleft(n,-1),nextsmallerright(n,n);
+        for(int i=0;i<n;i++)
+        {
+            while(!stk.empty() and v[i]<v[stk.top()])
+            {
+                nextsmallerright[stk.top()]=i;
+                stk.pop();
+            }
+            stk.push(i);
+        }
+        while(!stk.empty())
+            stk.pop();
+        for(int i=n-1;i>=0;i--)
+        {
+            while(!stk.empty() and v[i]<v[stk.top()])
+            {
+                nextsmallerleft[stk.top()]=i;
+                stk.pop();
+            }
+            stk.push(i);
+        }
+        for(int i=0;i<n;i++)
+        {
+            ans=max(ans,v[i]*(nextsmallerright[i]-nextsmallerleft[i]-1));
+        }
+        return ans;
+    }
+};
