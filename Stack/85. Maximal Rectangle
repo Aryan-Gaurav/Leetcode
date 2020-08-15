@@ -1,0 +1,70 @@
+Problem Link:
+https://leetcode.com/problems/maximal-rectangle/
+
+Description:
+Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing only 1's and return its area.
+
+Example:
+
+Input:
+[
+  ["1","0","1","0","0"],
+  ["1","0","1","1","1"],
+  ["1","1","1","1","1"],
+  ["1","0","0","1","0"]
+]
+Output: 6
+
+Code:
+Solution 1:
+Look carefully each row you can see stack of 1's in each column. Can you consider them as bars ??
+We can calculate height of bars for each column in a row(if no 1 is present then its bar is of height 0).Now we can find maximal area in histogram for each row 
+with calculated bar heights.
+
+class Solution {
+public:
+    int maximalRectangle(vector<vector<char>>& mat) 
+    {
+        if(mat.empty())
+            return 0;
+        int n= mat.size(),m=mat[0].size();
+        int height[n][m]; //to store height of bars at each row and column
+        for(int j=0;j<m;j++)
+            height[0][j]=mat[0][j]=='1';  //Intialise the 1st row as it is
+        for(int i=1;i<n;i++)
+            for(int j=0;j<m;j++)
+            {
+                if(mat[i][j]=='1')
+                    height[i][j]=1+height[i-1][j];  //add the height of previous rows
+                else height[i][j]=0;              //height is zero
+            }
+        int ans=0;
+        for(int i=0;i<n;i++)
+        {
+            stack<int> stk;
+            int j=0;
+            while(j<m)
+            {
+                while(!stk.empty() and height[i][j]<height[i][stk.top()])
+                {
+                    auto t=stk.top();
+                    stk.pop();
+                    if(stk.empty())
+                        ans=max(ans,height[i][t]*(j));
+                    else ans=max(ans,height[i][t]*(j-stk.top()-1));
+                }
+                stk.push(j);
+                j++;
+            }
+            while(!stk.empty())
+            {
+                auto t=stk.top();
+                stk.pop();
+                if(stk.empty())
+                    ans=max(ans,height[i][t]*j);
+                else ans=max(ans,height[i][t]*(j-stk.top()-1));
+            }
+        }
+        return ans;
+    }
+};
