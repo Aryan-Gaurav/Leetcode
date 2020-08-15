@@ -1,0 +1,61 @@
+Problem Link:
+https://leetcode.com/problems/valid-parentheses/
+
+Description:
+Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+An input string is valid if:
+
+Open brackets must be closed by the same type of brackets.
+Open brackets must be closed in the correct order.
+Note that an empty string is also considered valid.
+
+Example 1:
+
+Input: "()"
+Output: true
+
+Code:
+Solution 1:
+Using Stacks you can approach such type of problems.
+Key idea which provokes the thought process for stack is that in stack you always store kind of montonic elements either it be increasing order or decreasing 
+order or same kind of elements and check the top of stack with current element.Here the monotonic behaviour is opening brackets and we check as soon as a closing
+bracket is encountered we check the latest opening bracket is valid or not.At last all the opening brackets and closing brackets should pair up and stack should
+be empty.
+
+class Solution {
+public:
+    bool isValid(string s) 
+    {
+        stack<char> stk;
+        for(auto x:s)
+        {
+            if(x=='(' or x=='{' or x=='[')
+                stk.push(x);
+            else if(x==')')
+            {
+                if(!stk.empty())
+                {
+                    auto t=stk.top();
+                    stk.pop();
+                    if(t!='(')
+                        return 0;
+                }
+                else return 0;
+            }
+            else if(x=='}')
+            {
+                if(stk.empty() or stk.top()!='{')
+                    return 0;
+                stk.pop();
+            }
+            else if(x==']')
+            {
+                if(stk.empty() or stk.top()!='[')
+                    return 0;
+                stk.pop();
+            }
+        }
+        return stk.empty();
+    }
+};
