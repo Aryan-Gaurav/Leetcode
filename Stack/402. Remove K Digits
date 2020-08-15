@@ -45,6 +45,10 @@ public:
 
 Solution 2:
 O(N) time soltion(STACK)
+Idea of using a stack strikes due to the fact that when we make a graph of elements of the number,we want to remove such elemnts who have lower value(dip) 
+on its right.After removing that element if the dip donot vanish then again delete the peak and so on.Basically we want all the numbers to be in increasing order
+so for this we maintain a stack.
+
 We maintain a montonic increasing stack and as soon as we encounter a number which is less that stack.top() we pop elements until the top is greater than current
 number(this means we are removing those digits from nmber to make it least).In this way we traverse till end of string.After it if K is non-zero that means we have
 a incresing sequence of numbers and we need to remove last K digits from it.After all this is done,Just form the new number.
