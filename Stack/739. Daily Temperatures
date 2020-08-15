@@ -1,0 +1,68 @@
+Problem Link:
+https://leetcode.com/problems/daily-temperatures/
+
+Description:
+
+Given a list of daily temperatures T, return a list such that, for each day in the input, tells you how many days you would have to wait 
+until a warmer temperature. If there is no future day for which this is possible, put 0 instead.
+
+For example, given the list of temperatures T = [73, 74, 75, 71, 69, 72, 76, 73], your output should be [1, 1, 4, 2, 1, 1, 0, 0].
+
+Note: The length of temperatures will be in the range [1, 30000]. Each temperature will be an integer in the range [30, 100].
+
+Code:
+Solution 1:
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& v) 
+    {
+       int n=v.size();
+        vector<int> ans(n,-1);
+        stack<int> stk;
+        for(int i=0;i<n;i++)
+        {
+            while(!stk.empty() and v[i]>v[stk.top()])
+                ans[stk.top()]=i,stk.pop();
+            stk.push(i);
+        }
+        
+        for(int i=0;i<n;i++)
+        {
+            if(ans[i]==-1)
+                ans[i]=0;
+            else
+            {
+                ans[i]-=i;
+            }
+        }
+        return ans;
+    }
+};
+//116ms
+
+Solution 2:
+We can implement a stack using array so that growing and shrinking of stack donot cause delays in calculation.
+
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& v) 
+    {
+       int n=v.size();
+        vector<int> ans(n,0), stk(n);
+        int top=-1;
+        for(int i=0;i<n;i++)
+        {
+            while(top>-1 and v[i]>v[stk[top]])
+            {
+                ans[stk[top]]=i-stk[top];
+                top--;
+            }
+            stk[++top]=i;
+        }
+        return ans;
+    }
+};
+//100ms
+
+Solution 3:
+Without using stack we can do it by traversing from right side and calculating the answer.But i think that can lead to O(N*N)
