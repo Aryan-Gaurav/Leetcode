@@ -1,0 +1,64 @@
+Problem Link:
+https://leetcode.com/problems/task-scheduler/
+
+Description:
+You are given a char array representing tasks CPU need to do. It contains capital letters A to Z where each letter represents a different task. 
+Tasks could be done without the original order of the array. Each task is done in one unit of time. For each unit of time, the CPU could complete either
+one task or just be idle.
+
+However, there is a non-negative integer n that represents the cooldown period between two same tasks (the same letter in the array), that is that there 
+must be at least n units of time between any two same tasks.
+
+You need to return the least number of units of times that the CPU will take to finish all the given tasks.
+
+Example 1:
+
+Input: tasks = ["A","A","A","A","A","A","B","C","D","E","F","G"], n = 2
+Output: 16
+Explanation: 
+One possible solution is
+A -> B -> C -> A -> D -> E -> A -> F -> G -> A -> idle -> idle -> A -> idle -> idle -> A
+
+Code:
+Solution 1:
+Kind of brute force implmentation.Do as instructed,but before that increase the n because distance should be n+1 elements includind 1st elemnt so that repetition
+is after n tasks.
+
+class Solution {
+public:
+    int leastInterval(vector<char>& tasks, int n) 
+    {
+        queue<char> q;
+        priority_queue<pair<int,char>> pq;
+        unordered_map<char,int> count;
+        for(auto x:tasks)
+        {
+            count[x]++;
+        }
+        for(auto it:count)
+            if(it.second>0)
+                pq.push({it.second,it.first});
+        n++;  //increase n
+        while(!pq.empty())
+        {
+           priority_queue<pair<int,char>> temp; //for storing info of tasks to be scheduled in next run
+            for(int i=0;i<n;i++)
+            {
+                if(!pq.empty())
+                {
+                    auto t=pq.top();
+                    pq.pop();
+                    q.push(t.second);
+                    t.first--;
+                    if(t.first>0)
+                        temp.push(t);
+                }
+                else if(!temp.empty()) q.push('#'); //check if you have more tasks to schedule,if no then there is no need to be idle
+            }
+            while(!pq.empty())
+                temp.push(pq.top()),pq.pop(); //push the remaining elements in temp
+            pq=temp;
+        }
+        return q.size();
+    }
+};
