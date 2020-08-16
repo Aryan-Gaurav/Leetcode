@@ -90,3 +90,52 @@ public:
         return ans;
     }
 };
+
+Solution 4:
+Using DP in O(N) time.
+We divide the array into parts of length k and last sub-array can be of less length too. Now we go from left to right and calculate maximum till ith pos in
+a sub-array.Similarly we do from right to left.
+For Example: A = [2,1,3,4,6,3,8,9,10,12,56], w=4
+
+partition the array in blocks of size w=4. The last block may have less than w.
+2, 1, 3, 4 || 6, 3, 8, 9 || 10, 12, 56||
+
+Traverse the list from start to end and calculate max_so_far. Reset max after each block boundary (of w elements).
+left_max[] = 2, 2, 3, 4 || 6, 6, 8, 9 || 10, 12, 56
+
+Similarly calculate max in future by traversing from end to start.
+right_max[] = 4, 4, 4, 4 || 9, 9, 9, 9 || 56, 56, 56
+
+now, sliding max at each position i in current window, sliding-max(i) = max{right_max(i), left_max(i+w-1)}
+sliding_max = 4, 6, 6, 8, 9, 10, 12, 56
+                                                    -----------------
+Lets consider a window which lies in two parts 2, 1,| 3, 4,||| 6, 3,| 8, 9, |||10, 12, 56|||
+                                                    -----------------
+We can find the maximum of this window from going right to left from 4 to 3(saved in right_to_left[2] ie i) and going from left to right from 6 to 3
+(saved in left_to_right[5] ie i+k-1).
+
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int> &v, int k) 
+    {
+        int n=v.size();
+        vector<int> right_to_left(n),left_to_right(n);
+        for(int i=0;i<n;i++)
+        {
+            if(i%k==0)
+                left_to_right[i]=v[i];
+            else left_to_right[i]=max(v[i],left_to_right[i-1]);
+        }
+        right_to_left[n-1]=v[n-1]; //we do to avoid overflow 
+        for(int i=n-2;i>=0;i--)
+        {
+            if(i%k==0)
+                right_to_left[i]=v[i];
+            else right_to_left[i]=max(v[i],right_to_left[i+1]);//here overflow may occur if last element is evaluted by this formula
+        }
+        vector<int> ans(n-k+1);
+        for(int i=0;i<=n-k;i++)
+            ans[i]=max(right_to_left[i],left_to_right[i+k-1]);
+        return ans;
+    }
+};
