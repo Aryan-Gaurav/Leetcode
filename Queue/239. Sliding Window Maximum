@@ -1,0 +1,92 @@
+Problem Link:
+https://leetcode.com/problems/sliding-window-maximum/
+
+Description:
+Given an array nums, there is a sliding window of size k which is moving from the very left of the array to the very right. 
+You can only see the k numbers in the window. Each time the sliding window moves right by one position. Return the max sliding window.
+
+Follow up:
+Could you solve it in linear time?
+
+Example:
+
+Input: nums = [1,3,-1,-3,5,3,6,7], and k = 3
+Output: [3,3,5,5,6,7] 
+Explanation: 
+
+Window position                Max
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+ 
+
+Constraints:
+
+1 <= nums.length <= 10^5
+-10^4 <= nums[i] <= 10^4
+1 <= k <= nums.length
+
+Code:
+Solution 1:
+Brute Force approach in time O(N*K)
+
+Solution 2:
+Using BSTs like multimap time complexity O(N lg K)
+Just insert the first k elements in the multimap and then find its maximum.For the next window just remove the 1st element and add K+1 th element and again find
+maximum.
+vector<int> Solution::slidingMaximum(const vector<int> &v, int k) 
+{
+    int n=v.size();
+   multiset<int,greater<int>> mp; //so that maximum is at top of BST
+   for(int i=0;i<k;i++)
+    mp.insert(v[i]);
+    vector<int> ans(n-k+1);
+    ans[0]=*mp.begin();
+    for(int i=0;i<n-k;i++)
+    {
+        mp.erase(mp.find(v[i]));  //1st i used mp.erase(v[i]) but it erases all instances of v[i] whereas we want to delete only one
+        mp.insert(v[i+k]);
+        ans[i+1]=*mp.begin();
+    }
+    return ans;
+}
+
+Solution 3:
+Using Doubly-Ended Queue in time O(N+K).
+Main idea in this approach is to maintain the potential maximum elements candidates.If the array is in increasing order then the maximum is known to be the last
+element, rest of them are not even candidates for being as maximum because the length of window is greater than their width so they will be fully or partially 
+covered from right.So the maximum is ought to be the rightmost element. So we maintian a monotonic decreasing queue and at a time their can be atmost K elements
+in this queue.We push indicies from back and when we get more than k elements or elements which are not in current window then we pop from the front.For this 
+implementation we use a DEQUE.
+
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int> &v, int k) 
+    {
+        int n=v.size();
+        deque<int> q;
+        for(int i=0;i<k;i++)
+        {
+            while(!q.empty() and v[i]>v[q.back()])  //this ensures montonic decreasing nature of queue
+                q.pop_back();
+            q.push_back(i);
+        }
+        vector<int> ans(n-k+1);
+        for(int i=0;i<=n-k;i++)
+        {
+            while(!q.empty() and q.front()<i) //in front there may  be items from previous sliding windows,so remove them they are useless candidates
+                q.pop_front();
+            ans[i]=v[q.front()];  //after all redundant items are removed we go for the 1st elemnt of the queue
+            if(i+k>=n)  //this means we have done our job break out
+                break;
+            while(!q.empty() and v[i+k]>v[q.back()])  //again before pushing the last element check if it is greater than previous elemnts(now it can be
+                q.pop_back();                         // best candidate) 
+            q.push_back(i+k);
+        }
+        return ans;
+    }
+};
