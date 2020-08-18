@@ -1,0 +1,68 @@
+Problem Link:
+https://leetcode.com/problems/evaluate-reverse-polish-notation/
+
+Description:
+Evaluate the value of an arithmetic expression in Reverse Polish Notation.
+
+Valid operators are +, -, *, /. Each operand may be an integer or another expression.
+
+Note:
+
+Division between two integers should truncate toward zero.
+The given RPN expression is always valid. That means the expression would always evaluate to a result and there won't be any divide by zero operation.
+Example 1:
+
+Input: ["2", "1", "+", "3", "*"]
+Output: 9
+Explanation: ((2 + 1) * 3) = 9
+
+Code:
+Solution 1:
+class Solution {
+public:
+    int evalRPN(vector<string>& tokens) 
+    {
+        stack<int> stk;
+        
+        for(auto x:tokens)
+        {
+           if(x.size()>1)
+           {
+               stk.push(stoi(x));
+           }
+            else
+            {
+                if(x=="+")
+                {
+                    int a,b;
+                    a=stk.top(),stk.pop();
+                    b=stk.top(),stk.pop();
+                    stk.push(b+a);
+                }
+                else if(x=="-")
+                {
+                    int a,b;
+                    a=stk.top(),stk.pop();
+                    b=stk.top(),stk.pop();
+                    stk.push(b-a);  //see the order carefully
+                }
+                else if(x=="*")
+                {
+                    int a,b;
+                    a=stk.top(),stk.pop();
+                    b=stk.top(),stk.pop();
+                    stk.push(b*a);
+                }
+                else if(x=="/")
+                {
+                    int a,b;
+                    a=stk.top(),stk.pop();
+                    b=stk.top(),stk.pop();
+                    stk.push(b/a);  //see the order carefully
+                }
+                else stk.push(stoi(x)); //its one digit number
+            }
+        }
+        return stk.top();
+    }
+};
