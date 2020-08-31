@@ -35,7 +35,7 @@ Solution 1:
 Brute Force approach in time O(N*K)
 
 Solution 2:
-Using BSTs like multimap time complexity O(N lg K)
+Using BSTs like multimap or Priority Queue time complexity O(N lg K)
 Just insert the first k elements in the multimap and then find its maximum.For the next window just remove the 1st element and add K+1 th element and again find
 maximum.
 vector<int> Solution::slidingMaximum(const vector<int> &v, int k) 
