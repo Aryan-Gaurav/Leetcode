@@ -1,0 +1,130 @@
+Problem Link:
+https://leetcode.com/problems/reorganize-string/
+
+Description:
+Given a string S, check if the letters can be rearranged so that two characters that are adjacent to each other are not the same.
+
+If possible, output any possible result.  If not possible, return the empty string.
+
+Example 1:
+
+Input: S = "aab"
+Output: "aba"
+
+Code:
+Solution 1:
+(N lg26) as only 26 characters are there.
+Using priority queue and simulating the whole process.
+
+class Solution {
+public:
+    string reorganizeString(string s) 
+    {
+        int n=s.size();
+       map<char,int> cnt;
+        for(auto x:s)
+            cnt[x]++;
+       priority_queue< pair<int,char> > pq;
+        for(auto [x,y]:cnt) //see this syntax
+            pq.push({y,x});
+        string ans="";
+        while(!pq.empty())
+        {
+            auto t=pq.top();
+            pq.pop();
+            if(t.first>(n+1)/2) //one of the characters appears more than ceil of half so no string can be formed
+                return ans;
+            if(ans.empty()) //ans is empty so just add the top element
+            {
+                ans+=t.second;
+                t.first--;
+                if(t.first>0)
+                    pq.push(t);
+            }
+            else
+            {
+                if(ans.back()!=t.second)  //normal case its ok to have such condition
+                {
+                    ans+=t.second;
+                    t.first--;
+                    if(t.first>0)
+                        pq.push(t);
+                }
+                else                //the most frequent character is appearing again at top.So take next most frequen t and push the current character  
+                {
+                    auto temp=pq.top();
+                    pq.pop();
+                    pq.push(t);
+                    ans+=temp.second;
+                    temp.first--;
+                    if(temp.first>0)
+                        pq.push(temp);
+                }
+            }
+        }
+        return ans;
+    }
+};
+
+Solution 2:
+Using Binary Search and putting the same characters at maximum distance possible.
+For more general version see this ques
+https://codeforces.com/contest/1393/problem/C
+
+We do binary search on answer.We check if we can construct a string in which the same characters are atleast d distance apart.
+
+class Solution {
+public:
+    pair<bool,string> ok(vector<pair<int,char>> &count,int n,int d)
+    {
+       vector< vector<pair<int,char>>> pos(n);
+        priority_queue<pair<int,char>> pq;  //this is for simulating the process of string formation
+        for(auto x:count) //push all the candidates in priority queue
+            pq.push(x);
+        string ans="";
+        for(int i=0;i<n;i++)
+        {
+            for(auto x:pos[i])
+                pq.push(x); //these are the candidates who want to be at ith pos or maybe greater
+            if(pq.empty())  //nothing is in queue.So we can't construct the string
+                return {0,""};
+            auto t=pq.top();
+            pq.pop();
+            ans+=t.second;
+            t.first--;
+            if(t.first==0)  //the current character is exahausted
+                continue;
+            if(i+d>=n)  //not completely exhausted and no vacancies for this character.So impossible
+                return {0,""};
+            pos[i+d].push_back(t);  //push as candidate for i+d position
+        }
+        return {1,ans};
+    }
+    string reorganizeString(string s) 
+    {
+        int n=s.size();
+       map<char,int> cnt;
+        for(auto x:s)
+            cnt[x]++;
+      vector<pair<int,char>> v;
+        for(auto [x,y]:cnt)
+            v.push_back({y,x});
+      int low=1,high=1e6; //limits for binary search
+        string ans;
+        while(low<=high)
+        {
+            int mid=(low+high)/2;
+            auto [x,s]=ok(v,n,mid);
+            if(x==0)
+                high=mid-1;
+            else
+            {
+                low=mid+1;
+                ans=s;
+            }
+        }
+        if(high!=1)
+            return ans;
+        else return "";
+    }
+};
