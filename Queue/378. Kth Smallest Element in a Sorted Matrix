@@ -117,3 +117,75 @@ public:
         return pq.top().val;
     }
 };
+
+Solution 3:
+BINARY SEARCH O(N* lg( max-min ) *lg(N))
+
+The main idea behind binary search is that here we can't use idea of binary search on index as we can't find any fixed increasing or decreasing pattern in
+the matrix.The reason why we did not use index as "search space" for this problem is the matrix is sorted in two directions, we can not find a linear way 
+to map the number and its index.
+So we use binary search on the answer ie between lowest and highest element in a matrix and check if it is potential answer and change the boundaries 
+accordingly.
+
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& mat, int k) 
+    {
+        int n=mat.size();
+       int low=mat[0][0],high=mat[n-1][n-1]; //intialise the boundaries of answer
+        while(low<=high)
+        {
+            int mid=low+ (high-low)/2; //for avoiding overflow
+            int cnt=0;  //this will count how may elements are strictly less than mid
+            for(int i=0;i<n;i++)
+            {
+                if(mat[i][0]>=mid)  //the 1st element of row is greater than mid so we can't get smaller element now
+                    break;
+                int lo=0,hi=n-1; //for finding no. of elements strictly less than mid
+                while(lo<=hi)
+                {
+                    int mi=(lo+hi)/2;
+                    if(mat[i][mi]>=mid)
+                        hi=mi-1;
+                    else lo=mi+1;
+                }
+                cnt+=(hi+1);  //1 is added because indexing is zero based
+            }
+            if(cnt>=k)  //this means we have evaluated a element greater than answer. 
+                high=mid-1;
+            else low=mid+1;
+        }
+        return high;
+    }
+};
+
+Solution 4:
+Idea is same as above but we find number of elements smaller than mid in O(N) time instead of O(N*lg(N))
+So overall complexity is O(N *lg(max-min))
+
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& mat, int k) 
+    {
+        int n=mat.size();
+       int low=mat[0][0],high=mat[n-1][n-1];
+        while(low<=high)
+        {
+            int mid=low+(high-low)/2;
+            int cnt=0;
+            int j=n-1;
+            for(int i=0;i<n;i++)
+            {
+                if(mat[i][0]>=mid)
+                    break;
+                while(j>=0 and mat[i][j]>=mid)
+                    j--;
+                cnt+=(j+1);
+            }
+            if(cnt>=k)
+                high=mid-1;
+            else low=mid+1;
+        }
+        return high;
+    }
+};
