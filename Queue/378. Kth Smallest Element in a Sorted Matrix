@@ -1,0 +1,119 @@
+Problem Link:
+https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/
+
+Description:
+iven a n x n matrix where each of the rows and columns are sorted in ascending order, find the kth smallest element in the matrix.
+
+Note that it is the kth smallest element in the sorted order, not the kth distinct element.
+
+Example:
+
+matrix = [
+   [ 1,  5,  9],
+   [10, 11, 13],
+   [12, 13, 15]
+],
+k = 8,
+
+return 13.
+Note:
+You may assume k is always valid, 1 ≤ k ≤ n2.
+
+Code:
+Solution 1:
+Put all the elements in a priority queue and pop k-1 elements and return the root.
+OR just push everything into a vector and sort it.
+O(n*n*Lg n)
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& mat, int k) 
+    {
+         int n=mat.size();
+         priority_queue<int,vector<int>,greater<int>> pq;
+            for(int i=0;i<n;i++)
+                for(int j=0;j<n;j++)
+                    pq.push(mat[i][j]);
+        int ans;
+        while(k--)
+        {
+            ans=pq.top();
+            pq.pop();
+        }
+        return ans;
+    }
+};
+
+Solution 2:
+The main idea is to keep the potential smallest elements in a priority queue and pop k-1 elements one by one and return the root.
+First of all we push all elements of 1st row and then we pop the root and push the next element in same column.This is because for next smaller element after 
+(0,0) we have two candidates (0,1) or (1,0).We already have pushed (0,1) and we must push only (1,0) ie the next element in the same column.
+
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& mat, int k) 
+    {
+        int n=mat.size();
+       priority_queue<pair<int,pair<int,int>>, vector<pair<int,pair<int,int>>>, greater<pair<int,pair<int,int>>> > pq;
+        for(int j=0;j<n;j++)
+        {
+            pq.push({mat[0][j],{0,j}});
+        }
+        k--;  //reduce k by 1
+        while(k--)
+        {
+            auto t=pq.top();
+            pq.pop();
+            int i=t.second.first,j=t.second.second;
+            if(i+1<n)
+              pq.push({mat[i+1][j],{i+1,j}});
+        }
+        return pq.top().first;
+    }
+};
+
+Aliter:
+With custom comparator.
+
+class Solution {
+public:
+    struct element
+    {
+        int val,i,j;
+        element(){};
+        element(int _v,int _i,int _j)
+        {
+            val=_v;
+            i=_i;
+            j=_j;
+        }
+    };
+    struct cmp
+    {
+        bool operator()(const element &a,const element &b)
+        {
+            if(a.val!=b.val)
+                return a.val>b.val; //opp. of sorting this is special in priority queue
+            if(a.i!=b.i)
+                return a.i>b.i;
+            return a.j>b.j;
+        }
+    };
+    int kthSmallest(vector<vector<int>>& mat, int k) 
+    {
+        int n=mat.size();
+        priority_queue<element,vector<element>,cmp > pq;
+        for(int j=0;j<n;j++)
+        {
+            pq.push(element(mat[0][j],0,j));
+        }
+        k--;
+        while(k--)
+        {
+            auto t=pq.top();
+            pq.pop();
+            if(t.i+1<n)
+                pq.push(element(mat[t.i+1][t.j],t.i+1,t.j));
+        }
+        return pq.top().val;
+    }
+};
