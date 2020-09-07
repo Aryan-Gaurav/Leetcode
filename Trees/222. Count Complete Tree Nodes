@@ -38,3 +38,86 @@ Solution 2:
 O((Lg n)*(Lg n)) solution
 
 Realise that you never used the fact of complete binary tree.Use it.
+Since this is a complete binary tree, we calculate the height of left subtree and right subtree.If they come out to be equal, then you can say that the
+the left subtree is full binary tree(fully filled) and calculate the number of elements in it directly as 2^h -1. Then call the countNodes func for the right
+subtree. If they donot come out to be equal, this means the left subtree misses some leaf elements and right sub-tree misses all its leaf elements at h.
+So calculate the number of elements in right subtree is calculated directly(as it is full binary tree with height l-1 or r).Then call countNode for left subtree.
+
+For calculating the height effectively we can make use of the fact that populating satrts from left and maximum height can be of left subtree only.So it takes 
+Lg n time in calculating the height.
+
+Overall time complexity will be ((lg n)*(lg n)) as at each step we are discarding the half elements as in binary search which is either left subtree or right
+subtree. So no.of subproblems is lg n and calculation of height takes lg n.
+
+class Solution {
+public:
+    int height(TreeNode* root)
+    {
+        if(root==NULL)
+            return 0;
+        if(root->left==NULL and root->right==NULL)  //its leaf node
+            return 1;
+        int h=1;
+        h+=height(root->left);  //just go to left subtree.Its will always be optimal.
+        return h;
+    }
+    int countNodes(TreeNode* root) 
+    {
+        if(root==NULL)
+            return 0;
+        int l=height(root->left),r=height(root->right);
+        int ans=1;
+        if(l==r)
+        {
+            ans+=(1<<l)-1;
+            ans+=countNodes(root->right);
+        }
+        else
+        {
+            ans+=(1<<r)-1;
+            ans+=countNodes(root->left);
+        }
+        return ans;
+    }
+};
+
+Full iterative solution:
+
+class Solution {
+public:
+    int countNodes(TreeNode* root) 
+    {
+        if(root==NULL)
+            return 0;
+        int ans=0;
+       while(root!=NULL)
+       {
+           int l=0,r=0;
+           auto temp=root->left;
+           while(temp!=NULL)    //calculate the height of left subtree
+           {
+               l++;
+               temp=temp->left;
+           }
+           temp=root->right;
+           while(temp!=NULL)    //calculate the height of right subtree
+           {
+               r++;
+               temp=temp->left;
+           }
+           if(l==r) //this means left subtree is full binary tree
+           {
+               ans++;
+               ans+=(1<<l)-1;
+               root=root->right;
+           }
+           else
+           {
+               ans++;
+               ans+=(1<<r)-1;
+               root=root->left;
+           }
+       }
+        return ans;
+    }
+};
