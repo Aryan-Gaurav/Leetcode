@@ -1,0 +1,148 @@
+Problem Link:
+https://leetcode.com/problems/copy-list-with-random-pointer/
+
+Description:
+A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
+
+Return a deep copy of the list.
+
+The Linked List is represented in the input/output as a list of n nodes. Each node is represented as a pair of [val, random_index] where:
+
+val: an integer representing Node.val
+random_index: the index of the node (range from 0 to n-1) where random pointer points to, or null if it does not point to any node.
+ 
+
+Example 1:
+
+
+Input: head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
+Output: [[7,null],[13,0],[11,4],[10,2],[1,0]]
+
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+    
+    Node(int _val) {
+        val = _val;
+        next = NULL;
+        random = NULL;
+    }
+};
+*/
+Code:
+Solution 1:
+O(N) time and O(N) space
+class Solution {
+public:
+    Node* copyRandomList(Node* head) 
+    {
+        if(head==NULL)
+            return NULL;
+        unordered_map<Node*,Node*>o2n;
+        unordered_map<Node*,Node*>n2o;
+        auto original_prev=head,original_curr=head->next;
+        Node *copy_prev= new Node(head->val),*copy_curr=NULL;
+        o2n[head]=copy_prev;
+        n2o[copy_prev]=head;
+        while(original_curr!=NULL)
+        {
+            copy_curr= new Node(original_curr->val);
+            copy_prev->next=copy_curr;
+            o2n[original_curr]=copy_curr;
+            n2o[copy_curr]=original_curr;
+            copy_prev=copy_curr;
+            original_prev=original_prev->next;
+            original_curr=original_curr->next;
+        }
+        auto temp=head;
+        while(temp!=NULL)
+        {
+            o2n[temp]->random=o2n[temp->random];
+            temp=temp->next;
+        }
+        return o2n[head];
+    }
+};
+Less messy code :-)
+
+class Solution {
+public:
+    Node* copyRandomList(Node* head) 
+    {
+        if(head==NULL)
+            return NULL;
+        unordered_map<Node*,Node*>o2n;
+        unordered_map<Node*,Node*>n2o;
+        auto o_curr=head->next,c_curr = new Node(head->val);
+        o2n[head]=c_curr;
+        n2o[c_curr]=head;
+        while(o_curr!=NULL)
+        {
+            c_curr->next = new Node(o_curr->val);
+            o2n[o_curr]=c_curr->next;
+            n2o[c_curr->next]=o_curr;
+            o_curr=o_curr->next;
+            c_curr=c_curr->next;
+        }
+        auto temp=head;
+        while(temp!=NULL)
+        {
+            o2n[temp]->random=o2n[temp->random];
+            temp=temp->next;
+        }
+        return o2n[head];
+    }
+};
+
+Solution 2:
+In O(1) space.
+This is a 3 pass solution.
+In 1st pass we copy the nodes infront of original nodes.This way we know the position of newly copied nodes.
+In 2nd pass,we populate the random pointers of the copied nodes.
+In third pass,we separate the two linked lists.
+class Solution {
+public:
+    Node* copyRandomList(Node* head) 
+    {
+        if(head==NULL)
+            return NULL;
+        auto x=head;
+        while(x!=NULL)
+        {
+            auto temp = new Node(x->val); //create a copy of current node
+            temp->next = x->next;
+            x->next=temp;
+            x=temp->next;
+        }
+        x=head;
+        Node *copy=NULL;  //to get the adress of head of cloned list
+        while(x!=NULL)
+        {
+            if(x->random==NULL)     //this means no random pointer so clone also has no random pointer
+                x->next->random=NULL; 
+            else
+            {
+                x->next->random=x->random->next;  //populate the random pointer of clone
+            }
+            if(copy==NULL)  //we haven't updated the head of cloned list
+            {
+                copy=x->next;
+            }
+            x=x->next->next;  //go to next original element 
+        }
+        x=head;
+        while(x!=NULL)
+        {
+            auto y=x->next;
+            x->next=x->next->next;  //breaking the chain from the clone node
+            if(x->next) //if we have further original node then update next of cloned node
+                y->next=x->next->next;
+            x=x->next;
+        }
+        return copy;
+    }
+};
