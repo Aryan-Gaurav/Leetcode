@@ -23,7 +23,7 @@ merging them into one sorted list:
 
 Code:
 Solution 1:
-O(K*N*logK) where n elements are present in each list
+O(K*N*logK) where n elements are present in each list.
 class Solution {
 public:
     struct cmp
@@ -59,6 +59,6 @@ public:
         return head;
     }
 };
-
+You can do by merging two lists as one(k/2) times then for(k/4) this will also lead to same time complexity. 
 Solution 2:
 Just merge two lists and then merge it with third then fourth and so on.
