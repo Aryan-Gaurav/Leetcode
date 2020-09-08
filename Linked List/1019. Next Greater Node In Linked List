@@ -1,0 +1,84 @@
+Problem Link:
+https://leetcode.com/problems/next-greater-node-in-linked-list/
+
+Description:
+We are given a linked list with head as the first node.  Let's number the nodes in the list: node_1, node_2, node_3, ... etc.
+
+Each node may have a next larger value: for node_i, next_larger(node_i) is the node_j.val such that j > i, node_j.val > node_i.val, and j is 
+the smallest possible choice.  If such a j does not exist, the next larger value is 0.
+
+Return an array of integers answer, where answer[i] = next_larger(node_{i+1}).
+
+Note that in the example inputs (not outputs) below, arrays such as [2,1,5] represent the serialization of a linked list with a head node value of 2, 
+second node value of 1, and third node value of 5.
+
+
+Example 1:
+
+Input: [2,1,5]
+Output: [5,5,0]
+
+Code:
+Solution 1:
+Construct the array of nodes of linked list and find next greater element in the array.
+
+class Solution {
+public:
+    vector<int> nextLargerNodes(ListNode* head) 
+    {
+        vector<int> v;
+        auto temp=head;
+        while(head!=NULL)
+        {
+            v.push_back(head->val);
+            head=head->next;
+        }
+        int n=v.size();
+        stack<int> stk;
+        vector<int> ans(n);
+        for(int i=0;i<n;i++)
+        {
+            while(!stk.empty() and v[stk.top()]<v[i])
+            {
+                auto t=stk.top();
+                stk.pop();
+                ans[t]=v[i];
+            }
+            stk.push(i);
+        }
+        while(!stk.empty())
+        {
+            auto t=stk.top();
+            stk.pop();
+            ans[t]=0;
+        }
+        return ans;
+    }
+};
+
+Solution 2:
+Just iterate the linked list and construct the ans array as we do in finding next greater element.
+We can push 0 in ans array as we donot know the ans for this index now.
+class Solution {
+public:
+    vector<int> nextLargerNodes(ListNode* head) 
+    {
+        vector<int> ans;
+        int i=0;
+        stack<pair<int,int>> stk;
+        while(head!=NULL)
+        {
+            while(!stk.empty() and head->val > stk.top().first)
+            {
+                auto [x,y]=stk.top();
+                stk.pop();
+                ans[y]=head->val;
+            }
+            stk.push({head->val,i});
+            ans.push_back(0);
+            i++;
+            head=head->next;
+        }
+        return ans;
+    }
+};
