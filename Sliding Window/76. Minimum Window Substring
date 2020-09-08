@@ -1,0 +1,118 @@
+Problem Link:
+https://leetcode.com/problems/minimum-window-substring/
+
+Description:
+Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+
+Example:
+
+Input: S = "ADOBECODEBANC", T = "ABC"
+Output: "BANC"
+Note:
+
+If there is no such window in S that covers all characters in T, return the empty string "".
+If there is such window, you are guaranteed that there will always be only one unique minimum window in S.
+
+Code:
+Solution 1:
+Idea is to move like a caterpillar, first strech your front part till you reach your destination and then contraact the end part till the body gets normal.
+First find a valid window which contains all the characters of T then try to squueze that window from left side till the window is valid,this is done till we
+reach the end.
+
+class Solution {
+public:
+    string minWindow(string s, string t) 
+    {
+        if(t.empty())
+            return "";
+        unordered_map<char,int> occ;  //to record the occurence of each character
+        for(auto x:t)
+            occ[x]++;
+        int n=s.size();
+        int l=0,r=0;
+        unordered_map<char,int> cnt;
+        int d=INT_MAX;  //intial length of answer
+        string ans="";
+        while(r<n)  //this is to find the 1st valid window
+        {
+            cnt[s[r]]++;
+            if(cnt[s[r]]>=occ[s[r]])  //this means we can explore and check for rest of the characters
+            {
+                bool ok=1;
+                for(auto [i,j]:occ)
+                {
+                    if(cnt[i]<occ[i])
+                    {
+                        ok=0;
+                        break;
+                    }
+                }
+                if(ok)
+                {
+                    d=r-l+1;
+                    ans=s.substr(l,d);
+                    cnt[s[r]]--;  //this is done so that shrinking can take place in another loop thats why we donot increment r here
+                    break;
+                }
+            }
+            r++;
+        }
+       
+        while(r<n)
+        {
+           cnt[s[r]]++; //increase the count of current character
+            if(cnt[s[r]]>=occ[s[r]])  
+            {
+                while(cnt[s[l]]-1>=occ[s[l]]) //trying to shrink the window
+                {
+                    cnt[s[l]]--;
+                    l++;
+                }
+                if(d>r-l+1) //update the answer
+                {
+                    d=r-l+1;
+                    ans=s.substr(l,d);
+                }
+            }
+            r++;
+        }
+        return ans;
+    }
+};
+
+Instead of this cubersome yet simply understandable solution we can play a bit clever and write an elegant code.
+
+class Solution {
+public:
+    string minWindow(string s, string t) 
+    {
+        if(t.empty())
+            return "";
+        vector<int> cnt(128,0); //instead of unordered_map
+        for(auto x:t)
+            cnt[x]++;
+        int n=s.size();
+        int total=t.size(),l=0,r=0,head,len=INT_MAX;  //total counter here represents the no. of characters left to be matched
+        string ans="";
+        while(r<n)
+        {
+            if(cnt[s[r]]>0) //if current character is present in T then decrement total counter
+                total--;
+            cnt[s[r]]--;
+            while(cnt[s[l]]<0)  //try to squeeze the left window if possible,those whose count is negative are not present in T or have been found quite many times
+            {
+                cnt[s[l]]++;
+                l++;
+            }
+            if(len>r-l+1 and total==0)
+            {
+                len=r-l+1;
+                head=l;
+            }
+            r++;
+        }
+        if(len!=INT_MAX)
+            ans=s.substr(head,len);
+        return ans;
+    }
+};
