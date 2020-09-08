@@ -1,0 +1,69 @@
+Problem Link:
+https://leetcode.com/problems/subarrays-with-k-different-integers/
+
+Description:
+Given an array A of positive integers, call a (contiguous, not necessarily distinct) subarray of A good if the number of different integers in that subarray 
+is exactly K.
+
+(For example, [1,2,3,1,2] has 3 different integers: 1, 2, and 3.)
+
+Return the number of good subarrays of A.
+
+ 
+
+Example 1:
+
+Input: A = [1,2,1,2,3], K = 2
+Output: 7
+Explanation: Subarrays formed with exactly 2 different integers: [1,2], [2,1], [1,2], [2,3], [1,2,1], [2,1,2], [1,2,1,2].
+
+Code:
+Solution 1:
+
+O(N*N*N) 
+Brute force.Just check all the subarrays and check if count of distinct numbers in O(N).
+
+Solution 2:
+
+O(N*N)
+Just store the count of each number till index i.So check a subarray is O(1).
+
+Solution 3:
+(REMEMBER SLIDING WINDOW IS EASY FOR ATMOST CASES CALCULATION)
+It will be a very easy question of two pointers, if we had to find number of subarrays with ATMOST K numbers but here we wish to find subarrays containing exactly
+K numbers.
+This can be boiled down to finding total subarrays with atmost K characters and subtracting the number of subarrays containing atmost (K-1) characters.
+O(N) time complexity
+
+class Solution {
+public:
+    int atmost_k(vector<int> &v,int k)
+    {
+        int n=v.size();
+        int l=0,r=0;
+        unordered_map<int,int> cnt; //stores count of each number
+        int dcnt=0; //stores number of distinct character count 
+        int ans=0;
+        while(r<n)
+        {
+            cnt[v[r]]++;
+            if(cnt[v[r]]==1)
+                dcnt++;
+            while(l<=r and dcnt>k)
+            {
+                cnt[v[l]]--;
+                if(cnt[v[l]]==0)
+                    dcnt--;
+                l++;
+            }
+            ans+=(r-l+1); //there are total (r-l+1) options for placing left point of subarray for this particular r
+            r++;
+        }
+        return ans;
+    }
+    int subarraysWithKDistinct(vector<int>& v, int k) 
+    {
+        int ans=atmost_k(v,k)-atmost_k(v,k-1);  //take difference of k and k-1
+        return ans;
+    }
+};
