@@ -1,0 +1,64 @@
+Problem Link:
+https://leetcode.com/problems/merge-k-sorted-lists/
+
+Description:
+You are given an array of k linked-lists lists, each linked-list is sorted in ascending order.
+
+Merge all the linked-lists into one sorted linked-list and return it.
+
+ 
+
+Example 1:
+
+Input: lists = [[1,4,5],[1,3,4],[2,6]]
+Output: [1,1,2,3,4,4,5,6]
+Explanation: The linked-lists are:
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+merging them into one sorted list:
+1->1->2->3->4->4->5->6
+
+Code:
+Solution 1:
+O(K*N*logK) where n elements are present in each list
+class Solution {
+public:
+    struct cmp
+    {
+        bool operator()(ListNode* a,ListNode* b)
+        {
+            return a->val > b->val; //custom comparator of priority queue is somewhat opp. to sorting
+        }
+    };
+    ListNode* mergeKLists(vector<ListNode*> &lists) 
+    {
+        priority_queue<ListNode*,vector<ListNode*>,cmp> pq; //priority queue with custom comparator
+        for(auto x:lists)
+            if(x!=NULL)
+            pq.push(x);
+        if(pq.empty())    //no nodes to process
+            return NULL;
+        ListNode* head=NULL;
+        head=pq.top();
+        pq.pop();
+        auto t=head;
+        if(head->next!=NULL)
+            pq.push(head->next);
+        while(!pq.empty())
+        {
+            auto temp=pq.top();
+            pq.pop();
+            t->next=temp;
+            t=temp;
+            if(temp->next!=NULL)
+                pq.push(temp->next);
+        }
+        return head;
+    }
+};
+
+Solution 2:
+Just merge two lists and then merge it with third then fourth and so on.
