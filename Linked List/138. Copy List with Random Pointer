@@ -100,6 +100,8 @@ public:
 
 Solution 2:
 In O(1) space.
+The problem was to map old node to new node so we used hashmap, instead we can create nodes in such a way that we can acess then directly(maybe infront of 
+original node).
 This is a 3 pass solution.
 In 1st pass we copy the nodes infront of original nodes.This way we know the position of newly copied nodes.
 In 2nd pass,we populate the random pointers of the copied nodes.
