@@ -6,7 +6,10 @@ Description:
 Given a string s, find the longest palindromic substring in s. You may assume that the maximum length of s is 1000.(LEETCODE testcases are weak)
 
 Code:
-Solution 1:O(N) Manacher's Algorithm
+Solution 1:O(N) time and O(N) space
+
+Manacher's Algorithm
+
 class Solution {
 public:
 string longestPalindrome(string s) 
@@ -58,7 +61,7 @@ string longestPalindrome(string s)
 };
 
 Solution 2:
-DP solution
+DP solution( O(N*N) time and O(N*N) space)
 string Solution::longestPalindrome(string s) 
 {
     int n=s.size();
@@ -84,3 +87,55 @@ string Solution::longestPalindrome(string s)
     string ans=s.substr(idx,len);
     return ans; 
 }
+
+The above dp solution can be space optimised to O(N) by using two vector of lenght n.
+
+Solution 3:
+O(N*N) time but O(1) space(in avg. case it performs very good than DP as in DP its always O(N*N) but it goes N*N in worst case when string has all identical 
+characters).
+
+We consider each character of string as center and try to expand in both the directions and calculate the length of longest palindrome.We can write separate
+code for odd length palindrome and even length palindrome.To avoid writing two separate loops we can tackle this very easily because we have problem in even
+length.
+For eg if s="abba",if we take 1st 'a' or 2nd 'a' as center,then we can't expand but if we add "*" between two characters and in starting and end.
+We get s=" *a*b*b*a* " and we start to expand around this '*' then we can tackle even length palindromes and if we expand around alphabets we get odd length.
+               ^
+               |_____ expanding around this gives even length palindromes.
+               
+class Solution {
+public:
+string longestPalindrome(string s) 
+{
+    if(s.size()<2)
+        return s;
+    string temp="*";
+    for(auto x:s)
+    {
+        temp+=x;
+        temp+='*';
+    }
+    int n=temp.size();
+    int mx=1,st=0;
+    for(int i=1;i<n-1;i++)
+    {
+        int l=i,r=i;
+        while(l-1>=0 and r+1<n and temp[l-1]==temp[r+1])
+        {
+            l--;
+            r++;
+        }
+        if(mx<(r-l+1))
+        {
+            mx=r-l+1;
+            st=l;
+        }
+    }
+    string ans="";
+    for(int i=st;i<st+mx;i++)
+    {
+        if(temp[i]!='*')    //construct the answer
+            ans+=temp[i];
+    }
+    return ans;
+}
+};
