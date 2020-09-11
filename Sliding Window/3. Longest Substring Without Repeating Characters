@@ -76,7 +76,7 @@ public:
         memset(pos,-1,sizeof(pos));
         while(r<n)
         {
-            l=max(l,pos[s[r]]+1); //if the postion is in the window,l is updated otherwise leave it.
+            l=max(l,pos[s[r]]+1); //if the postion is in the window,l is updated otherwise leave it (observe the beauty of -1)
             pos[s[r]]=r;           //update the position od current character 
             ans=max(ans,r-l+1);
             r++;
