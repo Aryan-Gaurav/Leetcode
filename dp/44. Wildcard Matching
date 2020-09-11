@@ -1,0 +1,84 @@
+Problem Link:
+https://leetcode.com/problems/wildcard-matching/
+
+Description:
+Given an input string (s) and a pattern (p), implement wildcard pattern matching with support for '?' and '*'.
+
+'?' Matches any single character.
+'*' Matches any sequence of characters (including the empty sequence).
+The matching should cover the entire input string (not partial).
+
+Note:
+
+s could be empty and contains only lowercase letters a-z.
+p could be empty and contains only lowercase letters a-z, and characters like ? or *.
+
+Eg.
+s="acdcb"
+p="a*c?b" FALSE
+
+s = "adceb"
+p = "*a*b" TRUE
+
+s = "aa"
+p = "*"  TRUE
+
+Code:
+Solution 1:
+DP Solution O(N*M) time O(N*M) space.
+dp[i][j] contains answer to if s0.....i and p 0.....j matches or not.
+
+dp[i][j]=
+1. dp[i-1][j-1]                                     if s[i]==p[j] or p[j]=='?'
+2.                                            __
+  2.1 dp[ i ]  [ j-1 ] OR   0 occurence        |    if p[j]=='*'
+  2.2 dp[ i-1 ][j]          multiple occurence_|
+3. 0                                                else
+
+BASE CASE:
+We declare dp[n+1][m+1] to handle empty strings
+
+1.dp[0][0]=1
+
+2.  s=""
+    t="*****" TRUE
+
+This means that empty string can be matched with the pattern " ****...........** " so to incorporate this we fill dp[0][j].
+
+for(int j=1;j<=m;j++)
+{
+  if(p[j-1]=='*')
+    dp[0][j] = dp[0][j-1];
+}
+
+
+class Solution {
+public:
+    bool isMatch(string s, string p) 
+    {
+        int n=s.size(),m=p.size();
+        bool dp[n+1][m+1];
+        memset(dp,0,sizeof(dp));
+        dp[0][0]=1;
+        for(int j=0;j<m;j++)
+        {
+            if(p[j]=='*')
+                dp[0][j+1]=dp[0][j];
+        }
+        for(int i=0;i<n;i++)
+            for(int j=0;j<m;j++)
+            {
+                if(s[i]==p[j] or p[j]=='?')
+                    dp[i+1][j+1]=dp[i][j];
+                else if(p[j]=='*')
+                {
+                    dp[i+1][j+1]=dp[i+1][j] or dp[i][j+1];
+                }
+            }
+            
+       return dp[n][m];
+    }
+};
+
+Solution 2:
+The above dp always takes O(N*M) calculations and O(N*M) space but we can devise a more simple greedy approach.
