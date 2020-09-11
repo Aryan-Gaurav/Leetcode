@@ -81,4 +81,56 @@ public:
 };
 
 Solution 2:
+TIME: O(N*M) in worst case but avg case is linear O(N+M) and space is O(1).
+
 The above dp always takes O(N*M) calculations and O(N*M) space but we can devise a more simple greedy approach.
+
+In DP solution we expand '*' for 0,1,2...n characters where we may get answer from expanding 0  characters.This is a waste of calculations.
+Based on this approach we apply somewhat like dfs and greedy approach in which we first expand '*' for 0 characters, then check the pattern.If we got a match
+then OK otherwise now increase the count to 1 and further to 2,3,4.... In worst case it may go upto n but in avg. case it will be better.
+
+We can apply this approach using two pointers,one  i in text ( s ) and other j in pattern ( p ).We iterate until we reach end of text or pattern exhauts.
+
+class Solution {
+public:
+    bool isMatch(string s, string p) 
+    {
+        int n=s.size(),m=p.size();
+        int i=0,j=0;      //two pointers for text and pattern
+        int starpos=-1;   //records the last encountered '*' position
+        int matchpos=-1;  //records the last position from where matching began in text when '*' was encountered in pattern
+        while(i<n)
+        {
+            if(j<m and(s[i]==p[j] or p[j]=='?'))  //remember to check j<m as pattern may get finished off
+            {
+                i++;                              //match is found, increment the both pointers
+                j++;
+            }
+            else if(j<m and p[j]=='*')          // '*' is encountered so record the positions
+            {
+                starpos=j;                      //store the poistion of '*'
+                matchpos=i;                     //first expand it to zero characters and start matching as nothing has been encountered
+                j++;                            //move j to next pointer to start matching in subsequent steps 
+            }
+            else if(starpos!=-1)                //no match is found by last value of expanding so expand to more characters
+            {
+                i=++matchpos;                    //reset i to next character of last starting point and increase the last starting point to save it
+                j=starpos+1;                     //again start to match from next character of pattern as we have expanded already the '*'
+            }
+            else return 0;    //maybe pattern is exhausted or maybe no '*' was encountered so :-(
+        }
+        while(j<m and p[j]=='*')  //now the empty string can be matched to " ******.......* " so increment pattern pointer if its not at the end
+            j++;
+        return i==n and j==m; //lastly check if both pointer have reached till end.
+    }
+};
+
+Notice that, you reset '*' to last encounterd position not to any previous '*'.
+
+Suppose this is wrong.Now consider we ecountered '*' preceeding(say it old_star) the last ecountered '*' ( new_star ).We matched till the characters just before
+ ( new_star ) and the tried to expand the (new_star) and are proceding in the algorithm.If we had expanded more the (old_star) we would have been somewhat 
+forward in the pattern which can be eqivalently achieved by expanding more from (new_star) and thus we ignore the (old_star).This is the major boost in the speed
+of the algorithm as we expand only new_star and not any previous one.
+
+For Eg. if string is "abcbcbc" and pattern is "ab*c*c", first '*' matching "" or "cb" does not matter, because we can make the second '*' to match more if the 
+first one matching less than expect. So, we do not need to revert to old point anymore and only the last revert point need to be remembered.
