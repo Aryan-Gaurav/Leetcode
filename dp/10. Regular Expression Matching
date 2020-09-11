@@ -1,0 +1,110 @@
+Problem Link:
+https://leetcode.com/problems/regular-expression-matching/
+
+Description:
+Given an input string (s) and a pattern (p), implement regular expression matching with support for '.' and '*'.
+
+'.' Matches any single character.
+'*' Matches zero or more of the preceding element.
+The matching should cover the entire input string (not partial).
+
+Note:
+
+s could be empty and contains only lowercase letters a-z.
+p could be empty and contains only lowercase letters a-z, and characters like . or *.
+Example 1:
+
+Input:
+s = "aa"
+p = "a"
+Output: false
+Explanation: "a" does not match the entire string "aa".
+
+Few more examples to make it clear
+
+s="aaa"
+p=".*" TRUE
+
+s="aaab"
+p=".*" TRUE
+
+s="a*.*b*c"
+p="c" TRUE
+
+s="aab"
+p="c*a*b" TRUE
+
+Code:
+Solution 1:
+
+We maintain a boolean array to store if text matches with pattern or not.
+dp[i][j] means s0.....i and p 0......j matches or not.
+
+dp[i][j]=
+
+1. dp[ i-1 ][ j-1 ]  if s[i]==p[j] or p[j]=='.'
+2.
+  2.1 dp[ i ][ j-2 ]  (0 occurence)    if s[i]!=p[j]
+  2.2                                      _
+    2.2.1 dp[ i ]  [ j-2 ]    0 occurences  |
+    2.2.2 dp[ i ]  [ j-1 ]    1 occurence   |   if s[i]==p[j-1] or p[j-1]=='.' 
+    2.2.3 dp[ i-1 ][ j ]multiple occurence _|
+3. else 0
+
+We declare a table of dp[n+1][m+1] to incorporate empty strings
+
+BASE CASES:
+dp[0][0]=1
+
+s="a*.*b*c"
+p="c" TRUE
+
+Consider this example, we can see that a*.*b* matches with empty string "" so that final match is true.
+Any pattern of "#*#*..........#* can match with empty string 
+To incorporate this we fill dp[0][j] accordingly.
+
+dp[0][j] = (p[j-1]=='*') && dp[0][j-2]       (1-based indexing)
+
+class Solution {
+public:
+    bool isMatch(string s, string p) 
+    {
+        int n=s.size(),m=p.size();
+        bool dp[n+1][m+1];
+        memset(dp,0,sizeof(dp));
+        dp[0][0]=1; //base case
+        
+        for(int j=1;j<=m;j++)
+        {
+            if(p[j]=='*') //jth elem is '*' then base case
+            {
+                dp[0][j+1]=dp[0][j-1];  //stored in dp[0][j+1] due to 1 based indexing
+            }
+        }
+        for(int i=0;i<n;i++)
+            for(int j=0;j<m;j++)
+            {
+                if(s[i]==p[j] or p[j]=='.')
+                {
+                    dp[i+1][j+1]=dp[i][j];
+                }
+                else if(p[j]=='*')
+                {
+                   if(s[i]!=p[j-1] and p[j-1]!='.')
+                   {
+                       dp[i+1][j+1]=dp[i+1][j-1];
+                   }
+                   else if(s[i]==p[j-1] or p[j-1]=='.')
+                   {
+                       dp[i+1][j+1]=dp[i+1][j-1] or dp[i+1][j] or dp[i][j+1];
+                   }
+                }
+            }
+        // for(int i=0;i<=n;i++)
+        // {
+        //     for(int j=0;j<=m;j++)
+        //         cout<<dp[i][j]<<" ";cout<<endl;
+        // }
+        return dp[n][m];
+    }
+};
