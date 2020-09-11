@@ -1,0 +1,83 @@
+Problem Link:
+https://www.lintcode.com/problem/longest-substring-with-at-most-k-distinct-characters/description
+
+Description:
+Given a string S, find the length of the longest substring T that contains at most k distinct characters.
+
+Example 1:
+Input: S = "eceba" and k = 3
+Output: 4
+Explanation: T = "eceb"
+
+Example 2:
+Input: S = "WORLD" and k = 4
+Output: 4
+Explanation: T = "WORL" or "ORLD"
+
+Code:
+Solution 1:
+Use SLIDING WINDOW O(N) time
+Whenever you need to evaluate a sub-array or a substring then sliding window may do the job.
+
+class Solution {
+public:
+    int lengthOfLongestSubstringKDistinct(string &s, int k) 
+    {
+        if(s.empty())
+            return 0;
+        int n=s.size();
+        int l=0,r=0;
+        int cnt[128]={0};
+        int total=0;
+        int ans=0;
+        while(r<n)
+        {
+            if(cnt[s[r]]==0)  //new character is encountered so increase the total count
+                total++;
+            cnt[s[r]]++;
+            while(total>k)  //window has become invalid
+            {
+                if(cnt[s[l]]==1)
+                    total--;
+                cnt[s[l]]--;
+                l++;
+            }
+            ans=max(ans,r-l+1);
+            r++;
+        }
+        return ans;
+    }
+};
+
+Solution 2:
+This is when we want accelerate the shrinking of left side of window.
+It performs best when k is small compared to n,otherwise no effect or maybe negative.
+class Solution {
+public:
+    int lengthOfLongestSubstringKDistinct(string &s, int k) 
+    {
+        if(s.empty())
+            return 0;
+        int n=s.size();
+        int l=0,r=0;
+        unordered_map<char,int> pos;
+        int ans=0;
+        while(r<n)
+        {
+            pos[s[r]]=r;
+            if(pos.size()>k)
+            {
+                l=n;
+                for(auto &it:pos)
+                {
+                    l=min(l,it.second);
+                }
+                pos.erase(s[l]);
+                l++;
+            }
+            ans=max(ans,r-l+1);
+            r++;
+        }
+        return ans;
+    }
+};
