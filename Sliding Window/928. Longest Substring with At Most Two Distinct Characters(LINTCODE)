@@ -1,0 +1,87 @@
+Problem Link:
+https://www.lintcode.com/problem/longest-substring-with-at-most-two-distinct-characters/description
+
+Description:
+
+Given a string, find the length of the longest substring T that contains at most 2 distinct characters.
+
+Example 1
+Input: “eceba”
+Output: 3
+Explanation:
+T is "ece" which its length is 3.
+
+Example 2
+Input: “aaa”
+Output: 3
+
+Code:
+Solution 1:
+Use SLIDING WINDOW whenever you encounter sub-array or sub-string.
+Idea is to store total number of distinct characters in a window and when this total exceeds 2 then shrink from left side.
+
+class Solution {
+public:
+    int lengthOfLongestSubstringTwoDistinct(string &s) 
+    {
+        if(s.empty())
+            return 0;
+        int n=s.size();
+        int l=0,r=0;
+        int total=0;
+        int cnt[128]={0};
+        int ans=1;
+        while(r<n)
+        {
+            if(cnt[s[r]]==0)  //new distinct caharacter is ecountered,increase the total count
+                total++;
+            cnt[s[r]]++;
+            while(total>2)
+            {
+                if(cnt[s[l]]==1)
+                {
+                    total--;
+                }
+                cnt[s[l]]--;
+                l++;
+            }
+            ans=max(ans,r-l+1);
+            r++;
+        }
+        return ans;
+    }
+};
+
+Solution 2:
+Shrinking can be made fast by storing indices of each character in a hash map.
+
+class Solution {
+public:
+    int lengthOfLongestSubstringTwoDistinct(string &s) 
+    {
+        if(s.empty())
+            return 0;
+        int n=s.size();
+        int l=0,r=0;
+        unordered_map<char,int> pos;
+        int ans=1;
+        while(r<n)
+        {
+            pos[s[r]]=r;
+            if(pos.size()>2)  //more than 2 distinct cahracter encountered
+            {
+                l=s.size();
+                for(auto it:pos)
+                {
+                    if(l>it.second)
+                        l=it.second;
+                }
+                pos.erase(s[l]);
+                l++;
+            }
+            ans=max(ans,r-l+1);
+            r++;
+        }
+        return ans;
+    }
+};
