@@ -1,0 +1,86 @@
+Problem Link:
+https://leetcode.com/problems/longest-substring-without-repeating-characters/
+
+Description:
+Given a string s, find the length of the longest substring without repeating characters.
+
+ 
+
+Example 1:
+
+Input: s = "abcabcbb"
+Output: 3
+Explanation: The answer is "abc", with the length of 3.
+Example 2:
+
+Input: s = "bbbbb"
+Output: 1
+Explanation: The answer is "b", with the length of 1.
+Example 3:
+
+Input: s = "pwwkew"
+Output: 3
+Explanation: The answer is "wke", with the length of 3.
+Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.
+
+Solution 1:
+Whenever you need to evaluate a sub-array or a substring then sliding window may do the job.
+
+Using Sliding Window.
+
+Time O(2*N)= O(N)
+Here we need to find the maximum length so we keep on expanding the window until it becomes invalid.If it becomes invlaid, then start shrinkinf from left side.
+
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) 
+    {
+        if(s.empty())
+            return 0;
+        int n=s.size();
+        int ans=1;
+        int l=0,r=0;
+        int cnt[128]={0};
+        while(r<n)
+        {
+            cnt[s[r]]++;  //increase the count of s[r]
+            while(cnt[s[r]]>1)  //if window has become invalid then shrink from left side
+            {
+                cnt[s[l]]--;
+                l++;
+            }
+            ans=max(ans,r-l+1); //update the answer
+            r++;
+        }
+        return ans;
+    }
+};
+
+This shrinking can also take upto O(N) and expanding also takes  O(N) so total O(2*N).
+
+Solution 2:
+Using SLIDING WINDOW
+We can make shrinking fast by saving last index of every caharacter in an array.
+As we expand the window just check if the last index of the just included character lies in the current window or not.If yes,then shrink accordingly.
+
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) 
+    {
+        if(s.empty())
+            return 0;
+        int n=s.size();
+        int ans=1;
+        int l=0,r=0;
+        int pos[128];
+        memset(pos,-1,sizeof(pos));
+        while(r<n)
+        {
+            l=max(l,pos[s[r]]+1); //if the postion is in the window,l is updated otherwise leave it.
+            pos[s[r]]=r;           //update the position od current character 
+            ans=max(ans,r-l+1);
+            r++;
+        }
+        return ans;
+    }
+};
