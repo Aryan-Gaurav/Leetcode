@@ -1,0 +1,78 @@
+Problem Link:
+https://leetcode.com/problems/minimum-size-subarray-sum/
+
+Description:
+Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous subarray of which the sum ≥ s. 
+If there isn't one, return 0 instead.
+
+Example: 
+
+Input: s = 7, nums = [2,3,1,2,4,3]
+Output: 2
+Explanation: the subarray [4,3] has the minimal length under the problem constraint.
+Follow up:
+If you have figured out the O(n) solution, try coding another solution of which the time complexity is O(n log n). 
+
+Code:
+Solution 1:
+O(N lg n) time and O(N) space complexity
+BINARY SEARCH
+Here we donot have a sorted array,so we can't apply binary search directly.We cannot sort the array and then apply binary search as order does matter in the 
+array.So we must figure out how to convert this array to monotonic increasing or decreasing array.Since the array elements are positive so if we store prefix
+sum,it will always be incresing order,and we can apply binary search.
+
+class Solution {
+public:
+    int minSubArrayLen(int tar, vector<int> &v) 
+    {
+        if(v.empty())
+            return 0;
+        int n=v.size();
+        vector<int> pre(n+1,0);
+        for(int i=0;i<n;i++)
+            pre[i+1]+=pre[i]+v[i];
+        int ans=INT_MAX;
+        for(int i=0;i<n;i++)
+        {
+            int j=lower_bound(pre.begin(),pre.end(),tar+pre[i])-pre.begin();
+            if(j!=n+1)
+                ans=min(ans,j-i);
+        }
+        if(ans!=INT_MAX)
+            return ans;
+        else return 0;
+    }
+};
+
+Solution 2:
+O(N) time O(1) space
+Using sliding Window method.
+We expand the right side of the window and then try to squeeze the window from left side. 
+
+class Solution {
+public:
+    int minSubArrayLen(int tar, vector<int> &v) 
+    {
+        if(v.empty())
+            return 0;
+        int n=v.size();
+        int l=0,r=0;
+        int ans=INT_MAX;
+        int sum=0;
+        while(r<n)
+        {
+            sum+=v[r];
+            while(sum>tar and sum-v[l]>=tar)
+            {
+                sum-=v[l];
+                l++;
+            }
+            if(sum>=tar)
+                ans=min(ans,r-l+1);
+            r++;
+        }
+        if(ans<INT_MAX)
+            return ans;
+        else return 0;
+    }
+};
