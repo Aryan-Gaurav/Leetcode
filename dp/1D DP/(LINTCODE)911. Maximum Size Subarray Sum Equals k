@@ -1,0 +1,59 @@
+Problem Link:
+https://www.lintcode.com/problem/maximum-size-subarray-sum-equals-k/description
+
+Description:
+Given an array nums and a target value k, find the maximum length of a subarray that sums to k. If there isn't one, return 0 instead.
+
+The sum of the entire nums array is guaranteed to fit within the 32-bit signed integer range.
+
+Example1
+
+Input:  nums = [1, -1, 5, -2, 3], k = 3
+Output: 4
+Explanation:
+because the subarray [1, -1, 5, -2] sums to 3 and is the longest.
+
+Example2
+
+Input: nums = [-2, -1, 2, 1], k = 1
+Output: 2
+Explanation:
+because the subarray [-1, 2] sums to 1 and is the longest.
+Challenge
+Can you do it in O(n) time?
+
+Code:
+Solution 1:
+O(N*N*N) and O(N*N)(by prefix sum) are obvious.
+
+O(N) time and O(N) space
+
+When we store prefix sums and we want to evaluate the sum of arr[ i : j ] we can do that easily by pre[ 0: j] - pre[ 0:(i-1) ].Here we want this sum to be equal to 
+k i.e. pre[j] - pre[i-1] = k then pre[i-1] = pre[j] - k.We need to find if pre[j] - k exists in the pre array and find its 1st occurence.This can be done using a
+hashmap and storing the 1st occurence of every sum and then calculating the length of sub-array. We donot update pos if sum is already in the hashmap,as it would
+reduce the length of subarray.
+
+class Solution {
+public:
+    int maxSubArrayLen(vector<int> &v, int k) 
+    {
+        if(v.empty())
+            return 0;
+        int n=v.size();
+        unordered_map<int,int> pos;
+        int sum=0;
+        pos[sum]=-1;  //intialise the zero sum as -1 index for case when sum==k or you can hadle it separately
+        int ans=INT_MIN;
+        for(int i=0;i<n;i++)
+        {
+            sum+=v[i];
+            if(pos.find(sum-k)!=pos.end())  //this means sum-k exits 
+               ans=max(ans,i-pos[sum-k]);
+            if(pos.find(sum)==pos.end())  //this is done to prevent update of same sum again and again
+                pos[sum]=i;
+        }
+        if(ans==INT_MIN)
+            return 0;
+        return ans;
+    }
+};
