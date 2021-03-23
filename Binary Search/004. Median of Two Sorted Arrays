@@ -7,13 +7,19 @@ Merge the two arrays and then calulate the median.This will result in O(m+n) tim
 
 Solution 2:-
 A slightly better solution is to use binary search for finding Kth largest element in the combined array.We use a function which calculates it.
-Time complexity to find the kth largest element is **O(log(m)*log(n))**.
+Time complexity to find the kth largest element is O(log(m)*log(n)).
+
+Remember, in Binary Search questions just simulate the cases when hi=lo and then one of the condtions satisfy ans accordingly see which will be final answer.
+A general observation of mine is when you want to move your solution towards right then its hi and when you are trying to squueze the search area towards left then
+the answer is low.Here moving solution is that when you check some condition(generally the monotonic function) and it turns out to be favourable then you want 
+to go to which side,left or right.
+
 class Solution {
 public:
     int find(int pos,vector<int> &a,vector<int> &b)
     {
         int n=a.size(),m=b.size();
-        if(a[0]>=b.back())
+        if(a[0]>=b.back())  //base case(CAN BE REMOVED TOO)
         {
             if(pos<=m)
                 return b[pos-1];
@@ -23,15 +29,14 @@ public:
         while(lo<=hi)
         {
             int mid=(lo+hi)/2;
-            int i=upper_bound(b.begin(),b.end(),a[mid])-b.begin();
-            cout<<"before update\n"<<lo<<" "<<hi<<endl;
-            if(i+mid+1>pos)
+            int i=upper_bound(b.begin(),b.end(),a[mid])-b.begin();  //finds how many numbers are less than equal to mid (i.e. which will be added if a[mid] is added)
+            if(i+mid+1>pos) //generally 1st write condtion in which you reject the solution
                     hi=mid-1;
             else lo=mid+1;
-            cout<<"after update\n"<<lo<<" "<<hi<<endl;
         }
-        cout<<"final updated values\n"<<lo<<" "<<hi<<endl;
-        int i=upper_bound(b.begin(),b.end(),hi>=0? a[hi] : -2e9)-b.begin();
+        int i=0;
+        if(hi>=0)   //here hi stores the index which is rightmost index which will be included in final array when only pos elements are considered.
+            i=upper_bound(b.begin(),b.end(),a[hi])-b.begin();
         if(i+hi+1==pos)
             return a[hi];
         else return b[pos-(hi+1)-1];
@@ -44,8 +49,9 @@ public:
         int tot=n+m;
         int left=(tot-1)/2,right=tot/2;
         if(n==0)
-            return (b[left]+b[right])/2.;
+            return (b[left]+b[right])/2.0;
         int x=find(left+1,a,b),y=find(right+1,a,b);
-        return (x+y)/2.;
+        return (x+y)/2.0;
     }
 };
+Solution 3:-
