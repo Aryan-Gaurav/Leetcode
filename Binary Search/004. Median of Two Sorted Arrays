@@ -1,0 +1,51 @@
+Problem Link:- https://leetcode.com/problems/median-of-two-sorted-arrays/
+
+Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.
+
+Solution 1:-
+Merge the two arrays and then calulate the median.This will result in O(m+n) time complexity for merging and O(m+n) space complexity for forming the new array.
+
+Solution 2:-
+A slightly better solution is to use binary search for finding Kth largest element in the combined array.We use a function which calculates it.
+Time complexity to find the kth largest element is **O(log(m)*log(n))**.
+class Solution {
+public:
+    int find(int pos,vector<int> &a,vector<int> &b)
+    {
+        int n=a.size(),m=b.size();
+        if(a[0]>=b.back())
+        {
+            if(pos<=m)
+                return b[pos-1];
+            else return a[pos-m-1];
+        }
+        int lo=0,hi=n-1;
+        while(lo<=hi)
+        {
+            int mid=(lo+hi)/2;
+            int i=upper_bound(b.begin(),b.end(),a[mid])-b.begin();
+            cout<<"before update\n"<<lo<<" "<<hi<<endl;
+            if(i+mid+1>pos)
+                    hi=mid-1;
+            else lo=mid+1;
+            cout<<"after update\n"<<lo<<" "<<hi<<endl;
+        }
+        cout<<"final updated values\n"<<lo<<" "<<hi<<endl;
+        int i=upper_bound(b.begin(),b.end(),hi>=0? a[hi] : -2e9)-b.begin();
+        if(i+hi+1==pos)
+            return a[hi];
+        else return b[pos-(hi+1)-1];
+    }
+    double findMedianSortedArrays(vector<int> &a, vector<int> &b) 
+    {
+         if(a.size()>b.size())
+             swap(a,b);
+        int n=a.size(),m=b.size();
+        int tot=n+m;
+        int left=(tot-1)/2,right=tot/2;
+        if(n==0)
+            return (b[left]+b[right])/2.;
+        int x=find(left+1,a,b),y=find(right+1,a,b);
+        return (x+y)/2.;
+    }
+};
