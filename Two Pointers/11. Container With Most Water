@@ -12,6 +12,9 @@ Solution 1:O(N)
 The area depends on two things, the width of container and minimum of height of two rods.We first start by considering the container with maximum width, the start
 to decrease the width.If we want to increase the height of container then we must discard the rod with smallest height among two because dicarding lager will not
 increase the area.
+
+1st Code:-
+
 int Solution::maxArea(vector<int> &v) 
 {
     int n=v.size();
@@ -26,3 +29,30 @@ int Solution::maxArea(vector<int> &v)
     }
     return ans;
 }
+
+2nd Code:-
+
+class Solution {
+public:
+    int maxArea(vector<int> &v) 
+    {
+        if(v.size()<2)
+            return 0;
+        int n=v.size();
+        int ans=0,l=0,r=n-1;
+        while(l<r)
+        {
+            ans=max(ans,(r-l)*min(v[l],v[r]));
+            if(v[l]<v[r])
+                l++;
+            else if(v[l]>v[r]) 
+                r--;
+            else            //when v[l]==v[r] we can move both pointers away from that point
+            {               //this always leads to optimum solution as if lets say move left pointer away(l++) then 2 case arises
+                l++;        //1. when v[l]<v[r] this is never going to improve the answer as width and height both decreased from previous value
+                r--;        //2. when v[l]>v[r] in this case v[r] is going to be bottleneck and width has already decrese by 1 so ans donot improves.
+            }               // so we dont get optimum ans even if we move any one pointer,same for other one.So move both pointers
+        }
+        return ans;
+    }
+};
