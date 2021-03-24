@@ -111,3 +111,31 @@ public:
         return ans;
     }
 };
+
+Solution 4: Most Intutive One
+We partition the array from the highest bar.To the left part of array the highest bar is right boundary which is always fixed.Similarly for the right part of
+array we calculate the answer.
+
+class Solution {
+public:
+    int trap(vector<int> &v) 
+    {
+        if(v.empty())
+            return 0;
+        int ans=0;
+        int idx=max_element(v.begin(),v.end())-v.begin();
+        int max_val=0;
+        for(int i=0;i<=idx;i++) //for left part of array
+        {
+            max_val=max(max_val,v[i]);
+            ans+=max_val-v[i];
+        }
+        max_val=0;
+        for(int i=n-1;i>idx;i--)    //for right part of array
+        {
+            max_val=max(max_val,v[i]);
+            ans+=max_val-v[i];
+        }
+        return ans;
+    }
+};
