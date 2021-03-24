@@ -54,4 +54,64 @@ public:
         return (x+y)/2.0;
     }
 };
+
+
 Solution 3:-
+We can improve the time complexity to find the Kth largest number when combininig the arrays.The function of calculating the Kth number fails only when we ask for
+1st element whwn combining two size 1 arrays.So handle this base case separately.
+The time complexity will be O(log(min(n,m)).
+
+class Solution {
+public:
+    int find(int k,vector<int> &a,vector<int> &b)
+    {
+        int n=a.size(),m=b.size();
+        int lo=0,hi=n-1;
+        while(lo<=hi)
+        {
+            int mid=(lo+hi)/2;
+            int j=k-(mid+1)-1;
+            if(j>=m)    //this means we have taken less numbers from 1st array,so increase it 
+                lo=mid+1;
+            else if(j<0)    //this occurs when we have taken sufficient elements from 1st array only.We donot need 2nd array for Kth element so break.
+            {
+                lo=hi=mid;
+                break;
+            }
+            else
+            {
+                int x=2e9,y=2e9;    //x is next element in array A and y in array B.
+                if(mid+1<n)         //update x if possble
+                    x=a[mid+1];
+                if(j+1<m)           //update y if possible
+                    y=b[j+1];
+                if(a[mid]<=y && b[j]<=x)    //if x is greater than B's element and y is greater than A's element that means after combining max(a[mid],b[j])   
+                    return max(a[mid],b[j]);    //will be the Kth element
+                else if(a[mid]>y)           // if A's current element is greater than y that means we have smaller element in B and we have taken more than required
+                    hi=mid-1;               // numbers from A
+                else if(b[j]>x)             // if B's current element is greater then x that menas we have smaller numbers avilable in A and we have
+                    lo=mid+1;               // taken less numbers than required from A
+            }
+        }
+        int j=k-(hi+1)-1;
+        if(hi<0)
+            return b[j];
+        else if(j<0)
+            return a[hi];
+        else return max(a[hi],b[j]);
+    }
+    double findMedianSortedArrays(vector<int> &a, vector<int> &b) 
+    {
+         if(a.size()>b.size())
+             swap(a,b);
+        int n=a.size(),m=b.size();
+        int tot=n+m;
+        int left=(tot-1)/2,right=tot/2;
+        if(n==0)
+            return (b[left]+b[right])/2.0;
+        if(n==1 && m==1)    //same as base case because find function can't find 1st element in case of sizeof arrays is 1(as j becomes negative and give wrong answer)
+            return (a[0]+b[0])/2.0;
+        int x=find(left+1,a,b),y=find(right+1,a,b);
+        return (x+y)/2.0;
+    }
+};
