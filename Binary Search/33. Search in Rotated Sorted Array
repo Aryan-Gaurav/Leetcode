@@ -7,31 +7,49 @@ You are given a target value to search. If found in the array return its index, 
 You may assume no duplicate exists in the array.
 
 Code:
-Solution 1:First find the pivot then perform binary search.in one of the parts v[mid]<v[high] will always hold true.
+Solution 1:First find the pivot then perform binary search.in one of the parts v[0]<=v[mid] will always hold true.
 
-int Solution::search(const vector<int> &v, int x) 
-{
-    int n=v.size();
-    int low=0,high=n-1;
-    while(low<=high)
+class Solution {
+public:
+    int search(vector<int> &v, int tar) 
     {
-        if(low==high)
-            break;
-        int mid=(low+high)/2;
-        if(v[mid]<v[high])
-            high=mid-1;
-        else low=mid+1;
+        if(v.empty())
+            return -1;
+        int n=v.size();
+        int lo=0,hi=n-1;
+        if(v[0]<v[n-1]) //base case when array is slready sorted
+            lo=0;
+        else
+        {
+            while(lo<=hi)
+            {
+                int mid=(lo+hi)/2;
+                if(v[0]<=v[mid])
+                    lo=mid+1;
+                else hi=mid-1;
+            }
+        }
+        int idx=lo;
+        lo=0,hi=idx-1;
+        while(lo<=hi)
+        {
+            int mid=(lo+hi)/2;
+            if(v[mid]==tar)
+                return mid;
+            if(v[mid]<tar)
+                lo=mid+1;
+            else hi=mid-1;
+        }
+        lo=idx,hi=n-1;
+        while(lo<=hi)
+        {
+            int mid=(lo+hi)/2;
+            if(v[mid]==tar)
+                return mid;
+            if(v[mid]<tar)
+                lo=mid+1;
+            else hi=mid-1;
+        }
+        return -1;
     }
-    int off=low;
-    low=0,high=n-1;
-    while(low<=high)
-    {
-        int mid=(low+high)/2;
-        if(v[(mid+off)%n]==x)
-            return (mid+off)%n;
-        if(v[(mid+off)%n]<x)
-            low=mid+1;
-        else high=mid-1;
-    }
-    return -1;
-}
+};
