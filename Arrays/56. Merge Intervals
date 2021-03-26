@@ -65,7 +65,7 @@ public:
 };
 
 Code 3:
-Elegant Implementation
+Elegant Implementation.Try to extend the last interval's end time
 
 class Solution {
 public:
