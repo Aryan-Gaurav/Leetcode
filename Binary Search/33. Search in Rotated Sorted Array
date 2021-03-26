@@ -56,8 +56,8 @@ public:
 
 Solution 2:-
 Using only one Binary search.
-The main idea is to look mid is in which part of array,left part or right part and then check whether our taget is in left part or right part and accordingly shift
-the low and high.
+The main idea is to look mid is in which part of array,left part or right part and then check whether our taget is in left part or right part and accordingly 
+shift the low and high.
 
 class Solution {
 public:
