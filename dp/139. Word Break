@@ -72,8 +72,8 @@ bool wordBreak(string s, vector<string> &v)
 }
 
 Solution 3:
-The most optimised way to solve this is using trie to store all the words of dictionary and then we try to fit the target string to this trie.
-If at any point of time we encounter an EOW(end of word) then we have two options at this point, either slice the string and ths point and then try to fit remaning
+The most optimised way to solve this is using trie to store all the words of dictionary and then we try to fit the target string to this trie.If at any point
+of time we encounter an EOW(end of word) then we have two options at this point, either slice the string and ths point and then try to fit remaning
 string to the trie or just go on fitting the string.
 At any point in fitting the string we encounter any NULL pointer that means we can't go further so stop.
 O(N*N) time complexity and O(N) space.
