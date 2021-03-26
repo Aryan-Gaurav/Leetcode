@@ -22,8 +22,12 @@ merging them into one sorted list:
 1->1->2->3->4->4->5->6
 
 Code:
+Just merge two lists and then merge it with third then fourth and so on.This will lead to O(N*K*K) time complexity.
+
 Solution 1:
-O(K*N*logK) where n elements are present in each list.
+Time Comlexity is O(K*N*logK) where n elements are present in each list.
+Space Complexity is O(log K).
+
 class Solution {
 public:
     struct cmp
@@ -59,6 +63,93 @@ public:
         return head;
     }
 };
-You can do by merging two lists as one(k/2) times then for(k/4) this will also lead to same time complexity. 
+
 Solution 2:
-Just merge two lists and then merge it with third then fourth and so on.
+You can do by merging two lists as one(k/2) times then for(k/4) this will also lead to same time complexity.
+
+This appears to be O(1) space but recursion stack takes O(logK) space as depth can be atmost log(K).
+
+class Solution {
+public:
+    ListNode* join(ListNode *a,ListNode *b) //function to join two sorted lists in O(1) space
+    {
+        if(a==NULL)
+            return b;
+        if(b==NULL)
+            return a;
+        ListNode *start=NULL,*cur=NULL;
+        while(a!=NULL && b!=NULL)
+        {
+            if(a->val <= b->val)
+            {
+                if(start==NULL)
+                {
+                    start=a;
+                    cur=a;
+                }
+                else
+                {
+                    cur->next=a;
+                    cur=a;
+                }
+                a=a->next;
+            }
+            else
+            {
+                if(start==NULL)
+                {
+                    start=b;
+                    cur=b;
+                }
+                else
+                {
+                    cur->next=b;
+                    cur=b;
+                }
+                b=b->next;
+            }
+        }
+        if(a==NULL)
+            cur->next=b;
+        else if(b==NULL)
+            cur->next=a;
+        return start;
+    }
+    ListNode* help(int i,int j,vector<ListNode*> &v)
+    {
+        if(i==j)
+            return v[i];
+        else
+        {
+            int mid=(i+j)/2;
+            auto x=help(i,mid,v),y=help(mid+1,j,v);
+            return join(x,y);
+        }
+    }
+    ListNode* mergeKLists(vector<ListNode*> &v) 
+    {
+        if(v.empty())
+            return NULL;
+       return help(0,v.size()-1,v);
+    }
+};
+
+Solution 3:-
+For really O(1) space solution, we can implement the help function iteratively.
+
+ ListNode* mergeKLists(vector<ListNode*> &v) 
+    {
+        if(v.empty())
+            return NULL;
+       int n=v.size();
+        for(int len=1;len<n;len*=2)
+        {
+            for(int i=0;i<n;i+=2*len)
+            {
+                int j=i+len;
+                if(j<n) //if we have gone out of bounds then donot do it
+                    v[i]=join(v[i],v[j]); //its implementation is above this solution
+            }
+        }
+        return v[0]; //finally v[0] contains the answer
+    }
