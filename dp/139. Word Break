@@ -1,0 +1,128 @@
+Problem Link:-
+https://leetcode.com/problems/word-break/
+
+Problem:-
+
+Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.
+
+Note that the same word in the dictionary may be reused multiple times in the segmentation.
+
+ 
+
+Example 1:
+
+Input: s = "leetcode", wordDict = ["leet","code"]
+Output: true
+Explanation: Return true because "leetcode" can be segmented as "leet code".
+
+Example 2:
+
+Input: s = "applepenapple", wordDict = ["apple","pen"]
+Output: true
+Explanation: Return true because "applepenapple" can be segmented as "apple pen apple".
+Note that you are allowed to reuse a dictionary word.
+
+Solution 1:
+dp[i] stores if target string till i-1 can be formed using given words.
+We take each starting index and try to fit each word from dictionary to target string and then update it in dp array if we can do so.
+O(N*N*K) where N is length of each string and K is size of Dictionary.
+
+class Solution {
+public:
+    bool wordBreak(string s, vector<string> &v) 
+    {
+        int n=s.size();
+        bool ok[n+1];
+        memset(ok,0,sizeof(ok));
+        ok[0]=1;
+        for(int i=0;i<n;i++)
+        {
+            for(auto x:v)
+            {
+                if(i+x.size()-1<n && s.substr(i,x.size())==x)
+                {
+                    ok[i+x.size()]|=ok[i];
+                }
+            }
+        }
+        return ok[n];
+    }
+};
+
+Solution 2:
+A more efficient way to take indices i and j and check if substring [i,j] occurs in dictionary with unordered_set and if yes the update dp[j+1]=dp[i].
+It is O(N*N*N) if we take string searching in set to be dependent on length of string.
+
+bool wordBreak(string s, vector<string> &v) 
+{
+    unordered_set<string> st;
+    for(auto x:v)
+        st.insert(x);
+    int n=s.size();
+    bool dp[n+1];
+    memset(dp,0,sizeof(dp));
+    dp[0]=1;
+    for(int i=0;i<n;i++)
+        for(int j=i;j<n;j++)
+        {
+            if(dp[i] && st.count(s.substr(i,j-i+1)))
+                dp[j+1]=1;
+        }
+    return dp[n];
+}
+
+Solution 3:
+The most optimised way to solve this is using trie to store all the words of dictionary and then we try to fit the target string to this trie.
+If at any point of time we encounter an EOW(end of word) then we have two options at this point, either slice the string and ths point and then try to fit remaning
+string to the trie or just go on fitting the string.
+At any point in fitting the string we encounter any NULL pointer that means we can't go further so stop.
+O(N*N) time complexity and O(N) space.
+
+class Solution {
+public:
+    struct node
+    {
+        node *v[26]={NULL};
+        int eow=0;
+    };
+    node *head= new node;
+    void insert(string &s)
+    {
+        int n=s.size();
+        auto t=head;
+        for(int i=0;i<n;i++)
+        {
+            if(t->v[s[i]-'a']==NULL)
+            {
+                t->v[s[i]-'a'] = new node;
+            }
+            t=t->v[s[i]-'a'];
+        }
+        t->eow++;
+    }
+    bool wordBreak(string s, vector<string> &v) 
+    {
+        int n=s.size();
+        bool dp[n+1];
+        memset(dp,0,sizeof(dp));
+        dp[0]=1;
+        for(auto &x:v)
+            insert(x);
+        for(int i=0;i<n;i++)
+        {
+            if(dp[i])   //till (i-1) its ok
+            {
+                auto curr=head;
+                for(int j=i;j<n;j++)
+                {
+                    curr=curr->v[s[j]-'a'];
+                    if(curr==NULL)
+                        break;
+                    if(curr->eow)
+                        dp[j+1]=1;
+                }
+            }
+        }
+        return dp[n];
+    }
+};
