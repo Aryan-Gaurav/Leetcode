@@ -53,3 +53,39 @@ public:
         return -1;
     }
 };
+
+Solution 2:-
+Using only one Binary search.
+The main idea is to look mid is in which part of array,left part or right part and then check whether our taget is in left part or right part and accordingly shift
+the low and high.
+
+class Solution {
+public:
+    int search(vector<int> &v, int target) 
+    {
+        int n=v.size();
+        int lo=0,hi=n-1;
+        int start=v[0];
+        while(lo<=hi)
+        {
+            int mid=(lo+hi)/2;
+            if(v[mid]==target)
+                return mid;
+            bool is_big = start<=target;    //if true then the target is in left part of rotated array else in right part
+            bool is_where = start<=v[mid];  // if true that means mid is in left part of rotated array else in right part
+            if(is_big==is_where)    //both are in same part of array
+            {
+                if(v[mid]<target)
+                    lo=mid+1;
+                else hi=mid-1;
+            }
+            else                        // both are in different parts of array
+            {
+                if(v[mid]<target)       //we are in right part and target is in left part
+                    hi=mid-1;
+                else lo=mid+1;          // we are in left part and target is in right part
+            }
+        }
+        return -1;
+    }
+};
