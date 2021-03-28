@@ -1,0 +1,95 @@
+Problem Link:-
+https://leetcode.com/problems/maximum-product-subarray/
+
+Statement:-
+
+Given an integer array nums, find a contiguous non-empty subarray within the array that has the largest product, and return the product.
+
+It is guaranteed that the answer will fit in a 32-bit integer.
+
+A subarray is a contiguous subsequence of the array.
+
+ 
+
+Example 1:
+
+Input: nums = [2,3,-2,4]
+Output: 6
+Explanation: [2,3] has the largest product 6.
+Example 2:
+
+Input: nums = [-2,0,-1]
+Output: 0
+Explanation: The result cannot be 2, because [-2,-1] is not a subarray.
+
+Solution 1:-
+Just analogous to Kadane's Algo,think of where current element should be placed to improve the ans.
+We maintain product of two types of subarrays whose product is +ve in dp[0] and whose product is -ve in dp[1].
+Whenever we encounter a +ve element we append it to dp[0] and if dp[1] is not zero then make dp[1] more negative.
+When we encounter a -ve element, we swap(dp[0],dp[1]). Now if dp[0] is non-zero then append v[i] to dp[0] else leave it.Append v[i] to dp[1] so tha negative
+subarray is made more negative.
+When we encounter a 0 that means there is a break in all the running subarrays of +ve and -ve product.So reset the variables.
+
+class Solution {
+public:
+    int maxProduct(vector<int>& nums)
+    {
+        int dp[2]{};
+        int ans=-2e9;
+        for(int x:nums)
+        {
+              if(x>0)
+              {
+                  if(dp[0])
+                      dp[0]*=x;
+                  else dp[0]=x;
+                  if(dp[1])
+                      dp[1]*=x;
+                  ans=max(ans,dp[0]);
+              }
+            else if(x<0)
+            {
+                swap(dp[0],dp[1]);
+                if(dp[0])
+                {
+                    dp[0]*=x;
+                    ans=max(ans,dp[0]);
+                }
+                if(dp[1])
+                    dp[1]*=x;
+                else dp[1]=x;
+                ans=max(ans,dp[1]);
+            }
+            else
+            {
+                dp[0]=dp[1]=0;
+                ans=max(ans,0);
+            }
+        }
+        return ans;
+    }
+};
+
+Solution 2:-
+The answer to the problem will be subarray with even number of -ve numbers.Let's assume that we have odd number of -ve no. This menas we have to exclude either
+the 1st one or the last one.If we exclude the 1st one the answer is suffix product just before 1st -ve number or if we exclude the last one then the answer
+is prefix product just before last -ve number.Thus means that the ans will be ecountered in either prefix or suffix product.
+
+class Solution {
+public:
+    int maxProduct(vector<int> &v)
+    {
+        int left=0,right=0,ans=-2e9,n=v.size();
+        for(int i=0;i<n;i++)
+        {
+            if(left)
+                left*=v[i];
+            else left=v[i];
+            if(right)
+                right*=v[n-1-i];
+            else right=v[n-1-i];
+            ans=max({ans,left,right});
+        }
+        return ans;
+    }
+};
