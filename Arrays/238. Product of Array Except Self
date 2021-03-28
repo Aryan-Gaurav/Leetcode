@@ -1,0 +1,71 @@
+Problem Link:-
+https://leetcode.com/problems/product-of-array-except-self/
+
+Statement:-
+
+Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].
+
+The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
+Could you solve it in O(n) time complexity and without using division?
+ 
+
+Example 1:
+
+Input: nums = [1,2,3,4]
+Output: [24,12,8,6]
+Example 2:
+
+Input: nums = [-1,1,0,-3,3]
+Output: [0,0,9,0,0]
+
+Solution 1:-
+O(N) time complexity but in two pass.
+O(1) extra space.
+
+class Solution {
+public:
+    vector<int> productExceptSelf(vector<int> &v) 
+    {
+        if(v.empty())
+            return {};
+        int n=v.size();
+        int x=1;
+        vector<int> ans(n,1);
+        for(int i=0;i<n;i++)
+        {
+            ans[i]*=x;  //multiply running prefix product
+            x*=v[i];  //updating prefix produxt
+        }
+        x=1;
+        for(int i=n-1;i>=0;i--)
+        {
+            ans[i]*=x;  //multiplying running suffix product
+            x*=v[i];    //updating suffix product
+        }
+        return ans;
+    }
+};
+
+Soluton 2:-
+We can do this in one pass as the bulilding od prefix product and suffix product are independent od each other so think of moving simultaneously from forward
+and backward direction.
+
+class Solution {
+public:
+    vector<int> productExceptSelf(vector<int> &v) 
+    {
+        if(v.empty())
+            return {};
+        int n=v.size();
+        int left=1,right=1;
+        vector<int> ans(n,1);
+        for(int i=0;i<n;i++)
+        {
+            ans[i]*=left;
+            ans[n-1-i]*=right;
+            left*=v[i];
+            right*=v[n-1-i];
+        }
+        return ans;
+    }
+};
