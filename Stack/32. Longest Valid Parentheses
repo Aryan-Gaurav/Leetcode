@@ -1,0 +1,107 @@
+Problem Link:-
+https://leetcode.com/problems/longest-valid-parentheses/
+
+Statement:-
+Given a string containing just the characters '(' and ')', find the length of the longest valid (well-formed) parentheses substring.
+
+ 
+
+Example 1:
+
+Input: s = "(()"
+Output: 2
+Explanation: The longest valid parentheses substring is "()".
+Example 2:
+
+Input: s = ")()())"
+Output: 4
+Explanation: The longest valid parentheses substring is "()()".
+
+Solution 1:-
+Using DP we can store longest valid substring possible ending at index i.
+When s[i]==')' 2 cases arises:-
+1. s[i-1]='(', so we can append [i-1,i] at end of i-2, so dp[i]=2+dp[i-2]
+2. s[i-1]=')' that means till dp[i-1] length the sub-string is balanced so idx=i-dp[i-1]-1 and if s[idx]=='(' that means dp[i-1] can be extended.
+   Tricky part to handle is that whole substring [idx,i] can be appended if s[idx-1]==')' So dp[i]= 2 + dp[i-1] + (idx-1>=0 ? dp[idx-1] : 0)
+
+class Solution {
+public:
+    int longestValidParentheses(string s) 
+    {
+        if(s.empty())
+            return 0;
+        stack<int> stk;
+        int ans=0;
+        int n=s.size();
+        int dp[n];
+        for(int i=0;i<n;i++)
+        {
+            dp[i]=0;
+            if(s[i]==')')
+            {
+                if(i-1>=0)
+                {
+                    if(s[i-1]==')')
+                    {
+                        int idx=i-dp[i-1]-1;
+                        if(idx>=0 && s[idx]=='(')
+                            dp[i]=2+dp[i-1] + (idx-1>=0 ? dp[idx-1] : 0);
+                    }
+                    else if(s[i-1]=='(')
+                    {
+                        if(i-2>=0 && s[i-2]==')')
+                            dp[i]=2+dp[i-2];
+                        else dp[i]=2;
+                    }
+                }
+            }
+            ans=max(ans,dp[i]);
+        }
+        return ans;
+    }
+};
+
+SOlution 2:
+Using Stack to check valid substrings and to store invaild indices.So at end of iteration if stack is empty then the full string was valid.
+If stack is not empty the push the last index and then each point in stack represents boundary between which the substring was valid(Similar to max
+area in Histogram in which we stored the left and right index where height is less than current height).
+
+class Solution {
+public:
+    int longestValidParentheses(string s) 
+    {
+        if(s.empty())
+            return 0;
+        int ans=0,n=s.size();
+        stack<int> stk;
+        for(int i=0;i<n;i++)
+        {
+            if(s[i]=='(')
+                stk.push(i);
+            else
+            {
+                if(!stk.empty() && s[stk.top()]=='(')
+                    stk.pop();
+                else stk.push(i);
+            }
+        }
+        if(stk.empty()) //stack is empty means whole string was valid
+            ans=n;
+        else
+        {
+            stk.push(n);  //push the last invalid index as n
+            while(!stk.empty())
+            {
+                auto t=stk.top();
+                stk.pop();
+                if(!stk.empty())    //similar to Max area in histogram
+                    ans=max(ans,t-stk.top()-1);
+                else ans=max(ans,t);
+            }
+        }
+        return ans;
+    }
+};
+
+Solution 3:
+O(1) space solution.Think just like Kadane's algo used to solve maximum sum subarray problem.
